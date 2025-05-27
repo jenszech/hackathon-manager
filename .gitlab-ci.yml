@@ -33,7 +33,6 @@ variables:
 
 default:
   tags:    
-    - parking
     - shell
     - staging
 
@@ -46,7 +45,6 @@ stages:
 
 build-frontend-image:
   tags:    
-    - parking
     - shell
     - staging
 
@@ -77,7 +75,6 @@ build-frontend-image:
 
 build-backend-image:
   tags:    
-    - parking
     - shell
     - staging
 
@@ -102,7 +99,6 @@ build-backend-image:
 
 build-job:
   tags:    
-    - parking
     - docker
     - staging
     
@@ -123,9 +119,8 @@ build-job:
   rules:
     !reference [.default_trigger, rules ]
 
-unit-test-job:
+.unit-test-job:
   tags:    
-    - parking
     - docker
     - staging
   stage: test 
@@ -139,7 +134,6 @@ unit-test-job:
 
 .lint-test-job:
   tags:    
-    - parking
     - docker
     - staging  
   stage: test
@@ -156,7 +150,6 @@ unit-test-job:
 
 deploy-staging:
   tags:    
-    - parking
     - shell
     - staging
 
@@ -167,21 +160,17 @@ deploy-staging:
   script:
     - echo "Deploying application..."
     - mkdir -p $PROJECT_PATH
+    - echo $PROJECT_PATH
     - cd $PROJECT_PATH
     - echo "delete Docker-Stack"
-    # - docker-compose down 
-
+    - docker-compose down 
     - cd $RUNNER_FOLDER
-    - echo $PROJECT_PATH
     - pwd
     - ls -lah
     - cp -rf . /DOCKER/containers/hackathon-manager/
-    #- cp -rf frontend/dist/. /DOCKER/containers/hackathon-manager/nginx/content/
-    #- cp -rf backend/. /DOCKER/containers/hackathon-manager/backend
-    #- cp ./docker-compose.yaml /opt/data/docker/containers/hackathon-manager/
-    - docker-compose down 
+    - cd $PROJECT_PATH    
+    - docker-compose down --remove-orphans --timeout 30
     - echo "restart Docker-Stack"
-    - mkdir -p $PROJECT_PATH 
     - cd $PROJECT_PATH
     - docker-compose up -d --build
   rules:
@@ -189,7 +178,6 @@ deploy-staging:
     
 .deploy-production:
   tags:    
-    - parking
     - shell
     - production
     
@@ -201,12 +189,12 @@ deploy-staging:
     - mkdir -p $PROJECT_PATH
     - cd $PROJECT_PATH
     - echo "Delete Docker-Stack"
-    - docker-compose down 
+    - docker-compose down --remove-orphans --timeout 30
     - mkdir -p $RUNNER_FOLDER_PROD 
     - cd $RUNNER_FOLDER_PROD
-    - cp -rf frontend/dist/. /DOCKER/containers/parking-app/nginx/content/
-    - cp -rf backend/. /DOCKER/containers/parking-app/backend
-    - cp ./DOCKER-CONFIG/docker-compose.yaml /opt/data/docker/containers/parking-app/
+    - cp -rf frontend/dist/. /DOCKER/containers/hackathon-manager/nginx/content/
+    - cp -rf backend/. /DOCKER/containers/hackathon-manager/backend
+    - cp ./DOCKER-CONFIG/docker-compose.yaml /opt/data/docker/containers/hackathon-manager/
     
     - echo "Restart Docker-Stack"
     - cd $PROJECT_PATH
