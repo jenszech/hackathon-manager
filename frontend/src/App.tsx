@@ -97,6 +97,7 @@ const App = () => {
   const publicRoutes = getPublicRoutes();
   const privateRoutes = getPrivateRoutes(
     profile,
+    events,
     selectedEvent,
     projects,
     updateProjects,
