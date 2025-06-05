@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const logger = require('../logger');
 const { db_run } = require('../utils/db/dbUtils');
-const authenticateToken = require('../middlewares/authMiddleware');
+const { authenticateToken } = require('../middlewares/authMiddleware');
 const { dbInitialisation } = require('../utils/db/db');
 
 const tables = ['Participant', 'Initiator', 'Project', 'Event', 'User', 'Role', 'ProjectStatus'];

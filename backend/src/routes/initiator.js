@@ -2,7 +2,7 @@ const express = require('express');
 const { db_get, db_run } = require('../utils/db/dbUtils');
 const logger = require('../logger');
 
-const authenticateToken = require('../middlewares/authMiddleware');
+const { authenticateToken } = require('../middlewares/authMiddleware');
 const router = express.Router();
 const { ErrorMsg } = require('../constants');
 

@@ -4,10 +4,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const logger = require('../logger');
-
-const authenticateToken = require('../middlewares/authMiddleware');
+const { ensureRolePermission, authenticateToken, checkPermissions, authenticateAndAuthorize } = require('../middlewares/authMiddleware');
 const router = express.Router();
-const { ErrorMsg } = require('../constants');
+const { ErrorMsg, RoleTypes } = require('../constants');
 
 const createUser = (dbRow) => {
   return {
@@ -66,8 +65,9 @@ router.post('/login', async (req, res) => {
 });
 
 // *** GET /api/user/list *****************************************************
-router.get('/list', authenticateToken, async (req, res) => {
+router.get('/list', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   logger.debug(`API: GET  /api/user/list`);
+
   const result = await db_all(`SELECT User.* FROM User`);
   if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
   if (!result.row || (Array.isArray(result.row) && result.row.length === 0)) {
@@ -79,38 +79,15 @@ router.get('/list', authenticateToken, async (req, res) => {
   res.json(users);
 });
 
-// *** PARTICPATION *********************************************************
-const getUserParticipation = async (userId, project_id) => {
-  const result = await db_get(
-    `SELECT Participant.*, Project.idea, Project.event_id, Event.name FROM Participant 
-    JOIN Project ON Project.id = Participant.project_id 
-    JOIN Event ON Event.id = Project.event_id
-    WHERE Participant.user_id = ? AND Project.id = ?`,
-    [userId, project_id]
-  );
-  if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
-  if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
-  return createParticipate(result.row);
-};
-const getUserParticipationList = async (userId) => {
-  const result = await db_all(
-    `SELECT Participant.*, Project.idea, Project.event_id, Event.name FROM Participant 
-    JOIN Project ON Project.id = Participant.project_id 
-    JOIN Event ON Event.id = Project.event_id
-    WHERE Participant.user_id = ?`,
-    [userId]
-  );
-  if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
-  if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
-  return result.row.map(createParticipate);
-};
-
 // *** POST /api/user/participate *********************************************************
 router.post('/:id/participate', async (req, res) => {
   const { id } = req.params;
   const { project_id } = req.body;
   logger.debug(`API: POST /api/user/${id}/participate`);
-
+  ensureRolePermission(req.user.role, RoleTypes.USER);
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) || (role === RoleTypes.USER && req.user.id !== parseInt(id))) {
+    return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
+  }
   if (!project_id) {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
   }
@@ -139,6 +116,7 @@ router.post('/:id/participate', async (req, res) => {
 router.get('/:id/participate', authenticateToken, async (req, res) => {
   const { id } = req.params;
   logger.debug(`API: GET  /api/user/${id}/participate`);
+  ensureRolePermission(req.user.role, RoleTypes.USER);
 
   try {
     const projectList = await getUserParticipationList(id);
@@ -154,6 +132,10 @@ router.delete('/:id/participate', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { project_id } = req.body;
   logger.debug(`API: DEL  /api/user/${id}/participate`);
+  ensureRolePermission(req.user.role, RoleTypes.USER);
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) || (role === RoleTypes.USER && req.user.id !== parseInt(id))) {
+    return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
+  }
 
   result = await db_run('DELETE FROM Participant WHERE project_id = ? AND user_id = ?', [project_id, id]);
   if (result.err) {
@@ -173,7 +155,7 @@ router.post('/', async (req, res) => {
 
   //TODO: Set Passwort by Frontend
   if (!password) password = 'welcome!';
-  if (!role_id) role_id = 2;
+  if (!role_id) role_id = RoleTypes.USER;
 
   if (!name || !email) {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
@@ -214,10 +196,15 @@ router.post('/', async (req, res) => {
 });
 
 // *** PUT /api/user *********************************************************
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   let { name, email, is_private_email, telephone, is_private_telephone, role_id, avatar_url } = req.body;
   logger.debug(`API: PUT  /api/user/${id} -> Update User: ${name}`);
+
+  if ((!checkPermissions(req.user.role, RoleTypes.MANAGER)) && (req.user.role === RoleTypes.USER && req.user.id !== parseInt(id))) {
+    return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
+  }
+
 
   if (!name || !email || !telephone) {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
@@ -267,7 +254,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 });
 
 // *** GET /api/user *********************************************************
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   logger.debug(`API: GET  /api/user/${id}`);
 
@@ -283,7 +270,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 });
 
 // *** DELETE /api/user *********************************************************
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   logger.debug(`API: DEL  /api/user/${id}`);
 
@@ -299,3 +286,30 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 });
 
 module.exports = router;
+
+// *** Helper Functions******************************************************
+// *** PARTICPATION *********************************************************
+const getUserParticipation = async (userId, project_id) => {
+  const result = await db_get(
+    `SELECT Participant.*, Project.idea, Project.event_id, Event.name FROM Participant 
+    JOIN Project ON Project.id = Participant.project_id 
+    JOIN Event ON Event.id = Project.event_id
+    WHERE Participant.user_id = ? AND Project.id = ?`,
+    [userId, project_id]
+  );
+  if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
+  if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
+  return createParticipate(result.row);
+};
+const getUserParticipationList = async (userId) => {
+  const result = await db_all(
+    `SELECT Participant.*, Project.idea, Project.event_id, Event.name FROM Participant 
+    JOIN Project ON Project.id = Participant.project_id 
+    JOIN Event ON Event.id = Project.event_id
+    WHERE Participant.user_id = ?`,
+    [userId]
+  );
+  if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
+  if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
+  return result.row.map(createParticipate);
+};

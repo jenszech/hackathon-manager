@@ -1,7 +1,8 @@
 const ErrorMsg = Object.freeze({
   AUTH: {
     INVALID_CREDENTIALS: 'Invalid credentials',
-    INVALID_TOKEN: 'Invalid Token'
+    INVALID_TOKEN: 'Invalid Token',
+    NO_PERMISSION: 'No permission to access this resource'
   },
   VALIDATION: {
     MISSING_FIELDS: 'Missing fields',
@@ -26,4 +27,13 @@ const EventTypes = {
   PARTICIPANT_CHANGE: 'Participant Changed'
 };
 
-module.exports = { ErrorMsg, EventTypes };
+const RoleTypes = {
+  ADMIN: 1,
+  MANAGER: 2,
+  USER: 3,
+  GUEST: 4,
+  NEW: 5,
+  DUMMY: 6
+};
+
+module.exports = { ErrorMsg, EventTypes, RoleTypes };

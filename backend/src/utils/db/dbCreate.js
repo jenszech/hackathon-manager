@@ -107,8 +107,11 @@ async function dbFillKeyTables() {
       ['id', 'name'],
       [
         [1, "'admin'"],
-        [2, "'user'"],
-        [3, "'dummy'"]
+        [2, "'organiser'"],
+        [3, "'user'"],
+        [4, "'guest'"],
+        [5, "'new'"],
+        [6, "'dummy'"]
       ]
     );
     count++;

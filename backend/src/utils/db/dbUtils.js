@@ -106,6 +106,15 @@ async function existTableEntry(tablename, checkColumn, checkValue) {
   return result.row.count > 0;
 }
 
+async function getRowCount(tablename) {
+  const result = await db_get(`SELECT COUNT(*) as count FROM ${tablename}`);
+  if (result.err) {
+    logger.error(`getRowCount: Error checking table ${tablename}: ${result.err.message}`);
+    return 0;
+  }
+  return result.row.count;
+}
+
 module.exports = {
   db,
   db_run,
@@ -115,5 +124,6 @@ module.exports = {
   createTable,
   fillTable,
   isTableEmpty,
-  existTableEntry
+  existTableEntry,
+  getRowCount
 };

@@ -4,18 +4,19 @@
 **Release Date:** 2025-06-??
 
 ### ✨ Neue Features
-
-
-## Version 0.2.5
-**Release Date:** 2025-06-04
-
-### ✨ Neue Features
+- Neue Seite TeilernehmerListe (Alphabet Sektion, Namenssuche, Event Filter)
+- About Seite
+- Backend: Add Rol und Permission Check
 
 ### 🐞 Bug fixes & Verbesserungen
 - **Desing Fix im Header**  
   - Die einzelnen Elemente im Header sind nun vertical Zentriert
   - Bei kleinen Auflösungn bricht die Event Auswahl in die nächste Zeile um
 
+## Version 0.2.5
+**Release Date:** 2025-06-04
+
+### ✨ Neue Features
 **🏠 Dashboard**
 - **Dynamische Teilnehmeranzahl im Dashboard**  
   Die Teilnehmeranzahl im Dashboard wird jetzt als Summe der Initiatoren und Teilnehmer aller Projekte des aktuellen Events angezeigt.

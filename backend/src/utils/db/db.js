@@ -1,6 +1,7 @@
 const logger = require('../../logger');
 const { insertUserAdmin, insertEvents, insertProjects, insertUser, insertInitiator, insertParticipants } = require('./dbInsertData');
 const { dbCreate, dbFillKeyTables } = require('./dbCreate');
+const { migrateDB } = require('./dbMigrationsUtils');
 
 async function dbInitialisation() {
   logger.info('DB Init: DB creation started');
@@ -13,6 +14,9 @@ async function dbInitialisation() {
   await insertUser();
   await insertInitiator();
   await insertParticipants();
+
+  await migrateDB();
+
   logger.info('DB Init: DB created');
 }
 

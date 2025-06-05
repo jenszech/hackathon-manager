@@ -2,25 +2,25 @@ const request = require('supertest');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const config = require('../../src/config');
-const { db_run, db_get, db_all } = require('../../src/database');
+const { db_run, db_get, db_all } = require('../../src/utils/db/dbUtils');
 const logger = require('../../src/logger');
-const userRouter = require('../../src/routes/user'); // Pfad anpassen, falls nötig
+const userRouter = require('../../src/routes/user');
 
-jest.mock('../../src/database'); // Mock der Datenbankfunktionen
+jest.mock('../../src/utils/db/dbUtils');
 jest.mock('../../src/logger'); // Mock des Loggers
 
 const app = express();
 app.use(express.json());
 app.use('/api/user', userRouter);
 
-const { ErrorMsg } = require('../../src/constants');
+const { ErrorMsg, RoleTypes } = require('../../src/constants');
 
 describe('User API Endpoints', () => {
   describe('POST /api/user/login', () => {
     let token;
 
     beforeEach(() => {
-      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com' }, config.jwtSecret, {
+      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com', role: RoleTypes.USER}, config.jwtSecret, {
         expiresIn: '2h'
       });
     });
@@ -40,6 +40,22 @@ describe('User API Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('token');
+    });
+
+    it('should return 400 and NoPassword is set', async () => {
+      db_get.mockResolvedValue({
+        row: {
+          id: 1,
+          name: 'Test User',
+          email: 'test@example.com',
+          password: ''
+        }
+      });
+
+      const response = await request(app).post('/api/user/login').send({ email: 'test@example.com', password: 'password123' });
+
+      expect(response.status).toBe(400);
+      expect(response.text).toBe(ErrorMsg.SERVER.NO_PASSWORD);
     });
 
     it('should return 401 for invalid credentials', async () => {
@@ -91,7 +107,10 @@ describe('User API Endpoints', () => {
     /** Test für `GET /api/user/list` **/
     let token;
     beforeEach(() => {
-      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com' }, config.jwtSecret, {
+      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com', role: RoleTypes.USER }, config.jwtSecret, {
+        expiresIn: '2h'
+      });
+      tokenGuest = jwt.sign({ id: 2, name: 'Guest User', email: 'guest@example.com', role: RoleTypes.GUEST }, config.jwtSecret, {
         expiresIn: '2h'
       });
     });
@@ -127,6 +146,12 @@ describe('User API Endpoints', () => {
       expect(response.body[0]).toHaveProperty('email', 'user1@example.com');
     });
 
+    it('should return 403 with wrong role permissions', async () => {
+      const response = await request(app).get('/api/user/list').set('Authorization', `Bearer ${tokenGuest}`);
+      expect(response.status).toBe(403);
+      expect(response.text).toBe(ErrorMsg.AUTH.NO_PERMISSION);
+    });
+
     it('should return 404 if no user exist', async () => {
       db_all.mockResolvedValue({ row: [] });
 
@@ -154,7 +179,7 @@ describe('User API Endpoints', () => {
     /** Test für `POST /api/user` **/
     let token;
     beforeEach(() => {
-      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com' }, config.jwtSecret, {
+      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com', role: RoleTypes.USER }, config.jwtSecret, {
         expiresIn: '2h'
       });
     });
@@ -167,19 +192,16 @@ describe('User API Endpoints', () => {
         name: 'New User',
         email: 'newuser@example.com',
         telephone: '12345',
-        password: 'securepassword',
-        licence_plate: 'B-XY 123',
-        vehicle_type_id: 1
+        password: 'securepassword'
       });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('name', 'New User');
       expect(response.body).toHaveProperty('email', 'newuser@example.com');
       expect(response.body).toHaveProperty('telephone', '12345');
-      expect(response.body).toHaveProperty('licence_plate', 'B-XY 123');
       expect(response.body).toHaveProperty('is_private_email', false);
       expect(response.body).toHaveProperty('is_private_telephone', false);
-      expect(response.body).toHaveProperty('role_id', 2);
+      expect(response.body).toHaveProperty('role_id', RoleTypes.USER);
     });
 
     it('should return 409 if user already exists', async () => {
@@ -191,9 +213,7 @@ describe('User API Endpoints', () => {
         name: 'Existing User',
         email: 'existing@example.com',
         telephone: '12345',
-        password: 'securepassword',
-        licence_plate: 'B-XY 123',
-        vehicle_type_id: 1
+        password: 'securepassword'
       });
 
       expect(response.status).toBe(409);
@@ -206,34 +226,22 @@ describe('User API Endpoints', () => {
 
       let response = await request(app).post('/api/user').send({
         email: 'newuser@example.com',
-        telephone: '12345',
-        licence_plate: 'B-XY 123'
-      });
-      expect(response.status).toBe(400);
-      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
-      response = await request(app).post('/api/user').send({
-        name: 'New User',
-        telephone: '12345',
-        licence_plate: 'B-XY 123'
-      });
-      expect(response.status).toBe(400);
-      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
-
-      response = await request(app).post('/api/user').send({
-        name: 'New User',
-        email: 'newuser@example.com',
-        licence_plate: 'B-XY 123'
-      });
-      expect(response.status).toBe(400);
-      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
-
-      response = await request(app).post('/api/user').send({
-        name: 'New User',
-        email: 'newuser@example.com',
         telephone: '12345'
       });
       expect(response.status).toBe(400);
       expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
+      response = await request(app).post('/api/user').send({
+        name: 'New User',
+        telephone: '12345'
+      });
+      expect(response.status).toBe(400);
+      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
+
+      response = await request(app).post('/api/user').send({
+        name: 'New User',
+        email: 'newuser@example.com'
+      });
+      expect(response.status).toBe(201);
     });
 
     it('should return 500 on database error', async () => {
@@ -243,9 +251,7 @@ describe('User API Endpoints', () => {
         name: 'New User',
         email: 'newuser@example.com',
         telephone: '12345',
-        password: 'securepassword',
-        licence_plate: 'B-XY 123',
-        vehicle_type_id: 1
+        password: 'securepassword'
       });
       expect(response.status).toBe(500);
       expect(response.text).toBe(ErrorMsg.SERVER.ERROR);
@@ -256,7 +262,13 @@ describe('User API Endpoints', () => {
     /** Test für `PUT /api/user/:id` **/
     let token;
     beforeEach(() => {
-      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com' }, config.jwtSecret, {
+      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com', role: RoleTypes.USER }, config.jwtSecret, {
+        expiresIn: '2h'
+      });
+      tokenGuest = jwt.sign({ id: 2, name: 'Guest User', email: 'guest@example.com', role: RoleTypes.GUEST }, config.jwtSecret, {
+        expiresIn: '2h'
+      });
+      token99 = jwt.sign({ id: 99, name: 'Guest User', email: 'guest@example.com', role: RoleTypes.USER }, config.jwtSecret, {
         expiresIn: '2h'
       });
     });
@@ -268,8 +280,7 @@ describe('User API Endpoints', () => {
           name: 'Old Name',
           email: 'old@example.com',
           telephone: '12345',
-          role_id: 2,
-          licence_plate: 'OLD-123',
+          role_id: RoleTypes.USER,
           is_private_email: false,
           is_private_telephone: false
         }
@@ -284,8 +295,7 @@ describe('User API Endpoints', () => {
         name: 'New Name',
         email: 'new@example.com',
         telephone: '67890',
-        role_id: 2,
-        licence_plate: 'NEW-456',
+        role_id: RoleTypes.USER,
         is_private_email: true,
         is_private_telephone: true
       });
@@ -294,20 +304,46 @@ describe('User API Endpoints', () => {
       expect(response.body).toHaveProperty('name', 'New Name');
       expect(response.body).toHaveProperty('email', 'new@example.com');
       expect(response.body).toHaveProperty('telephone', '67890');
-      expect(response.body).toHaveProperty('licence_plate', 'NEW-456');
       expect(response.body).toHaveProperty('is_private_email', true);
       expect(response.body).toHaveProperty('is_private_telephone', true);
+    });
+
+    it('should return 403 with wrong role permissions', async () => {
+      let response = await request(app).put('/api/user/2').set('Authorization', `Bearer ${tokenGuest}`);
+      expect(response.status).toBe(403);
+      expect(response.text).toBe(ErrorMsg.AUTH.NO_PERMISSION);
+
+      response = await request(app).put('/api/user/2').set('Authorization', `Bearer ${token}`).send({
+        name: 'New Name',
+        email: 'new@example.com',
+        telephone: '67890',
+        role_id: RoleTypes.USER,
+        is_private_email: true,
+        is_private_telephone: true
+      });
+      expect(response.status).toBe(403);
+      expect(response.text).toBe(ErrorMsg.AUTH.NO_PERMISSION);
+
+      response = await request(app).put('/api/user/2').set('Authorization', `Bearer ${token}`).send({
+        name: 'New Name',
+        email: 'new@example.com',
+        telephone: '67890',
+        role_id: RoleTypes.USER,
+        is_private_email: true,
+        is_private_telephone: true
+      });
+      expect(response.status).toBe(403);
+      expect(response.text).toBe(ErrorMsg.AUTH.NO_PERMISSION);
     });
 
     it('should return 404 if user does not exist', async () => {
       db_get.mockResolvedValue({ row: null });
 
-      const response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token}`).send({
+      const response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token99}`).send({
         name: 'New Name',
         email: 'new@example.com',
         telephone: '67890',
-        role_id: 2,
-        licence_plate: 'NEW-456'
+        role_id: RoleTypes.USER
       });
 
       expect(response.status).toBe(404);
@@ -318,31 +354,21 @@ describe('User API Endpoints', () => {
       db_get.mockResolvedValue({ row: null });
       db_run.mockResolvedValue({ lastID: 1 });
 
-      let response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token}`).send({
-        email: 'newuser@example.com',
-        telephone: '12345',
-        licence_plate: 'B-XY 123'
-      });
-      expect(response.status).toBe(400);
-      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
-      response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token}`).send({
-        name: 'New User',
-        telephone: '12345',
-        licence_plate: 'B-XY 123'
-      });
-      expect(response.status).toBe(400);
-      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
-      response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token}`).send({
-        name: 'New User',
-        email: 'newuser@example.com',
-        licence_plate: 'B-XY 123'
-      });
-      expect(response.status).toBe(400);
-      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
-      response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token}`).send({
-        name: 'New User',
+      let response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token99}`).send({
         email: 'newuser@example.com',
         telephone: '12345'
+      });
+      expect(response.status).toBe(400);
+      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
+      response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token99}`).send({
+        name: 'New User',
+        telephone: '12345'
+      });
+      expect(response.status).toBe(400);
+      expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
+      response = await request(app).put('/api/user/99').set('Authorization', `Bearer ${token99}`).send({
+        name: 'New User',
+        email: 'newuser@example.com'
       });
       expect(response.status).toBe(400);
       expect(response.text).toBe(ErrorMsg.VALIDATION.MISSING_FIELDS);
@@ -356,8 +382,7 @@ describe('User API Endpoints', () => {
             name: 'Existing User',
             email: 'existing@example.com',
             telephone: '12345',
-            role_id: 2,
-            licence_plate: 'OLD-123'
+            role_id: RoleTypes.USER
           }
         })
         .mockResolvedValueOnce({
@@ -368,8 +393,7 @@ describe('User API Endpoints', () => {
         name: 'New Name',
         email: 'new@example.com', // Diese E-Mail gehört einem anderen User
         telephone: '67890',
-        role_id: 2,
-        licence_plate: 'NEW-456'
+        role_id: RoleTypes.USER
       });
 
       expect(response.status).toBe(409);
@@ -383,8 +407,7 @@ describe('User API Endpoints', () => {
           name: 'Old Name',
           email: 'old@example.com',
           telephone: '12345',
-          role_id: 2,
-          licence_plate: 'OLD-123',
+          role_id: RoleTypes.USER,
           is_private_email: false,
           is_private_telephone: false
         }
@@ -399,8 +422,7 @@ describe('User API Endpoints', () => {
         name: 'Updated Name',
         email: 'updated@example.com',
         telephone: '67890',
-        role_id: 2,
-        licence_plate: 'NEW-456'
+        role_id: RoleTypes.USER
       });
 
       expect(response.status).toBe(500);
@@ -419,7 +441,10 @@ describe('User API Endpoints', () => {
     let token;
     beforeEach(() => {
       jest.clearAllMocks();
-      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com' }, config.jwtSecret, {
+      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com', role: RoleTypes.USER }, config.jwtSecret, {
+        expiresIn: '2h'
+      });
+      tokenGuest = jwt.sign({ id: 2, name: 'Guest User', email: 'guest@example.com', role: RoleTypes.GUEST }, config.jwtSecret, {
         expiresIn: '2h'
       });
     });
@@ -431,8 +456,7 @@ describe('User API Endpoints', () => {
           name: 'User One',
           email: 'user1@example.com',
           telephone: '12345',
-          role_id: 2,
-          licence_plate: 'ABC123'
+          role_id: RoleTypes.USER
         }
       });
 
@@ -442,10 +466,15 @@ describe('User API Endpoints', () => {
       expect(response.body).toHaveProperty('name', 'User One');
       expect(response.body).toHaveProperty('email', 'user1@example.com');
       expect(response.body).toHaveProperty('telephone', '12345');
-      expect(response.body).toHaveProperty('licence_plate', 'ABC123');
       expect(response.body).toHaveProperty('is_private_email', false);
       expect(response.body).toHaveProperty('is_private_telephone', false);
-      expect(response.body).toHaveProperty('role_id', 2);
+      expect(response.body).toHaveProperty('role_id', RoleTypes.USER);
+    });
+
+    it('should return 403 with wrong role permissions', async () => {
+      const response = await request(app).get('/api/user/1').set('Authorization', `Bearer ${tokenGuest}`);
+      expect(response.status).toBe(403);
+      expect(response.text).toBe(ErrorMsg.AUTH.NO_PERMISSION);
     });
 
     it('should return 404 if user not found', async () => {
@@ -476,7 +505,10 @@ describe('User API Endpoints', () => {
     /**  Test für `DELETE /api/user/:id` **/
     let token;
     beforeEach(() => {
-      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com' }, config.jwtSecret, {
+      token = jwt.sign({ id: 1, name: 'Test User', email: 'test@example.com', role: RoleTypes.ADMIN }, config.jwtSecret, {
+        expiresIn: '2h'
+      });
+      tokenUser = jwt.sign({ id: 2, name: 'Guest User', email: 'guest@example.com', role: RoleTypes.USER }, config.jwtSecret, {
         expiresIn: '2h'
       });
     });
@@ -488,6 +520,12 @@ describe('User API Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.text).toBe('User deleted successfully');
+    });
+
+    it('should return 403 with wrong role permissions', async () => {
+      const response = await request(app).delete('/api/user/1').set('Authorization', `Bearer ${tokenGuest}`);
+      expect(response.status).toBe(403);
+      expect(response.text).toBe(ErrorMsg.AUTH.NO_PERMISSION);
     });
 
     it('should return 404 if user does not exist', async () => {

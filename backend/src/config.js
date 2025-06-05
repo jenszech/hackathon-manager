@@ -1,6 +1,7 @@
 // be aware that backend is not using vite.env from frontend application, because backend run as seperate application process
 // vite frontend variables are public so a security issue to don´t use it together in one .env!
 
+const { log } = require('console');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -40,7 +41,8 @@ module.exports = {
   mysqlConnectionLimit: check(process.env.MYSQL_CONNECTION_LIMIT, 10),
   mysqlQueueLimit: check(process.env.MYSQL_QUEUE_LIMIT, 0),
   jwtSecret: check(process.env.JWT_SECRET, 'your-secret-key'),
-  check
+  check,
+  logEnvironmentVariables
 };
 
 function check(value, defaultValue) {
