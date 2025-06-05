@@ -8,6 +8,7 @@ import AddProjectPage from '../pages/AddProject/AddProjectPage';
 import { getExistingToken } from '../utils/authUtils';
 import TeamListPage from '../pages/Teams/TeamListPage';
 import AboutPage from '../pages/AboutPage/AboutPage';
+import UserListPage from '../pages/UserList/UserList';
 
 const handleProjectAdded = (selectedEvent: any, updateProjects: any) => {
   const token = getExistingToken();
@@ -36,6 +37,7 @@ export const getPublicRoutes = () => [
 
 export const getPrivateRoutes = (
   profile: any,
+  events: any,
   selectedEvent: any,
   projects: any,
   updateProjects: any,
@@ -57,6 +59,14 @@ export const getPrivateRoutes = (
     profile: profile,
     event: selectedEvent,
     projects: projects,
+  },
+  {
+    path: '/userlist',
+    component: UserListPage,
+    exact: true,
+    profile: profile,
+    projects: projects,
+    events: events
   },
   {
     path: '/projects',
