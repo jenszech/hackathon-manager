@@ -66,7 +66,7 @@ export const getPrivateRoutes = (
     exact: true,
     profile: profile,
     projects: projects,
-    events: events
+    events: events,
   },
   {
     path: '/projects',

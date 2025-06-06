@@ -8,7 +8,6 @@
   width: auto;
   margin: 16px;
   padding-left: 8px;
-
 }
 
 .alphabet-navigation {
@@ -37,12 +36,12 @@
 
 .user-section ion-card-content {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
 }
 
 .user-section ion-badge {
-  margin-left: 8px; 
+  margin-left: 8px;
 }
 
 .user-section-detail {
@@ -78,4 +77,3 @@
   visibility: visible;
   opacity: 1;
 }
-

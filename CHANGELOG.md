@@ -1,17 +1,30 @@
 # 📦 Changelog
 
 ## Version 0.2.6
-**Release Date:** 2025-06-??
+**Release Date:** 2025-06-06
 
 ### ✨ Neue Features
-- Neue Seite TeilernehmerListe (Alphabet Sektion, Namenssuche, Event Filter)
-- About Seite
-- Backend: Add Rol und Permission Check
+- **TeilnehmerListe**  
+  - Alphabetische Sektion zur schnellen Navigation.
+  - Namenssuche für gezielte Filterung.
+  - Event-Filter zur Anzeige von Teilnehmern basierend auf Events.
+- **About Seite**  
+  - Neue Seite mit Informationen über die Anwendung und das Team.
+- **Backend: Rollen- und Berechtigungsprüfung**  
+  - Implementierung von Rollen- und Berechtigungsprüfungen für alle relevanten Endpunkte.
+- **Berücksichtigung der Privatsphäre-Einstellungen**  
+  - Alle Resultsets im Backend berücksichtigen jetzt die Privatsphäre-Einstellungen der Benutzer.
+- **Backend UnitTests**  
+  - Erweiterung der Testabdeckung für alle neuen Backend-Funktionen.
 
 ### 🐞 Bug fixes & Verbesserungen
-- **Desing Fix im Header**  
-  - Die einzelnen Elemente im Header sind nun vertical Zentriert
-  - Bei kleinen Auflösungn bricht die Event Auswahl in die nächste Zeile um
+- **Design Fix im Header**  
+  - Elemente im Header sind jetzt vertikal zentriert.
+  - Bei kleinen Auflösungen bricht die Event-Auswahl in die nächste Zeile um.
+- **Fehlerbehebung bei Teilnehmer-Logik**  
+  - Verbesserte Handhabung von leeren Teilnehmer-Arrays.
+- **Stabilitätsverbesserungen**  
+  - Kleinere Fehler wurden behoben, um die allgemeine Stabilität und Performance der Anwendung zu verbessern.
 
 ## Version 0.2.5
 **Release Date:** 2025-06-04

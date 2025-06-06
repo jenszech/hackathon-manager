@@ -107,5 +107,10 @@ describe('authMiddleware', () => {
     it('should return false if user does not have sufficient permissions', () => {
       expect(checkPermissions(RoleTypes.USER, RoleTypes.ADMIN)).toBe(false);
     });
+
+    it('should return false without any parameter', () => {
+      expect(checkPermissions(null, RoleTypes.ADMIN)).toBe(false);
+      expect(checkPermissions(RoleTypes.MANAGER, null)).toBe(false);
+    });
   });
 });

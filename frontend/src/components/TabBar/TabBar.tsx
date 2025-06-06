@@ -1,6 +1,12 @@
 import React from 'react';
 import { IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/react';
-import { homeOutline, calendarOutline, peopleOutline, folderOutline, personCircleOutline } from 'ionicons/icons';
+import {
+  homeOutline,
+  calendarOutline,
+  peopleOutline,
+  folderOutline,
+  personCircleOutline,
+} from 'ionicons/icons';
 import './TabBar.css';
 
 const TabBar: React.FC = () => {

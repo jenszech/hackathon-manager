@@ -62,11 +62,10 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
         continue;
       }
       console.log(`UserListPage: Projects fetched for event ${event.id}:`, result.data);
-      aggregatedProjects.push(...result.data); 
+      aggregatedProjects.push(...result.data);
     }
     setProjects(aggregatedProjects);
   };
-
 
   useEffect(() => {
     console.log('UserListPage: useEffect: ', isAuthenticated, profile);
@@ -100,9 +99,7 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
 
     // Filter nach Suchbegriff
     if (term) {
-      filtered = filtered.filter((user) =>
-        user.name.toLowerCase().includes(term.toLowerCase())
-      );
+      filtered = filtered.filter((user) => user.name.toLowerCase().includes(term.toLowerCase()));
     }
 
     // Filter nach Event
@@ -110,9 +107,10 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
       filtered = filtered.filter((user) =>
         projects.some(
           (project) =>
-            (project.initiators.some((initiator) => initiator.id === user.id) || project.participants.some((p) => p.id === user.id)) &&
-            project.event_id === event.id
-        )
+            (project.initiators.some((initiator) => initiator.id === user.id) ||
+              project.participants.some((p) => p.id === user.id)) &&
+            project.event_id === event.id,
+        ),
       );
     }
 
@@ -128,7 +126,7 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
     acc[firstLetter].push(user);
     return acc;
   }, {});
-  
+
   console.log('UserListPage: projects: ', projects);
 
   return (
@@ -195,43 +193,45 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
         </IonGrid>
 
         {/* Benutzerliste nach Buchstaben */}
-        {Object.keys(groupedUsers).sort().map((letter) => (
-          <div key={letter} id={`section-${letter}`} className="user-section">
-            <IonText className="user-section-title">{letter}</IonText>
-            <IonGrid >
-              <IonRow>
-                {groupedUsers[letter].map((user) => {
-                  const initiatorCount = projects.filter(
-                    (project) => project.initiators.some((initiator) => initiator.id === user.id)
-                  ).length;
-                  const participantCount = projects.filter(
-                    (project) => project.participants.some((p) => p.id === user.id)
-                  ).length;
+        {Object.keys(groupedUsers)
+          .sort()
+          .map((letter) => (
+            <div key={letter} id={`section-${letter}`} className="user-section">
+              <IonText className="user-section-title">{letter}</IonText>
+              <IonGrid>
+                <IonRow>
+                  {groupedUsers[letter].map((user) => {
+                    const initiatorCount = projects.filter((project) =>
+                      project.initiators.some((initiator) => initiator.id === user.id),
+                    ).length;
+                    const participantCount = projects.filter((project) =>
+                      project.participants.some((p) => p.id === user.id),
+                    ).length;
 
-                  return (
-                    <IonCol size="12" sizeMd="3" key={user.id}>
-                      <IonCard className="user-card">
-                        <IonCardContent>
-                          <IonText className='user-section-detail'>{user.name}</IonText>
-                          <div>
-                            <div className="tooltip-container">
-                              <IonBadge color="secondary">{initiatorCount}</IonBadge>
-                              <div className="tooltip">Initiator</div>
+                    return (
+                      <IonCol size="12" sizeMd="3" key={user.id}>
+                        <IonCard className="user-card">
+                          <IonCardContent>
+                            <IonText className="user-section-detail">{user.name}</IonText>
+                            <div>
+                              <div className="tooltip-container">
+                                <IonBadge color="secondary">{initiatorCount}</IonBadge>
+                                <div className="tooltip">Initiator</div>
+                              </div>
+                              <div className="tooltip-container">
+                                <IonBadge color="primary">{participantCount}</IonBadge>
+                                <div className="tooltip">Teilnehmer</div>
+                              </div>
                             </div>
-                            <div className="tooltip-container">
-                              <IonBadge color="primary">{participantCount}</IonBadge>
-                              <div className="tooltip">Teilnehmer</div>
-                            </div>
-                          </div>
-                        </IonCardContent>
-                      </IonCard>
-                    </IonCol>
-                  );
-                })}
-              </IonRow>
-            </IonGrid>
-          </div>
-        ))}
+                          </IonCardContent>
+                        </IonCard>
+                      </IonCol>
+                    );
+                  })}
+                </IonRow>
+              </IonGrid>
+            </div>
+          ))}
       </IonContent>
     </IonPage>
   );

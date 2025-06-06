@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const logger = require('../logger');
-const { ensureRolePermission, authenticateToken, checkPermissions, authenticateAndAuthorize } = require('../middlewares/authMiddleware');
+const { checkPermissions, authenticateAndAuthorize } = require('../middlewares/authMiddleware');
 const router = express.Router();
 const { ErrorMsg, RoleTypes } = require('../constants');
 
@@ -18,7 +18,7 @@ const createUser = (dbRow) => {
     is_private_telephone: dbRow?.is_private_telephone ?? false,
     role_id: dbRow?.role_id ?? 2,
     avatar_url: dbRow?.avatar_url ?? '/assets/avatars/avatar_1.png',
-    participate: null
+    participate: []
   };
 };
 
@@ -75,17 +75,21 @@ router.get('/list', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =
   }
 
   // Wandle jedes DB-Row-Objekt in ein User-Objekt mit createUser()
-  const users = result.row.map(createUser);
+  let users = result.row.map(createUser);
+
+  // Filtere die privaten Felder basierend auf den Einstellungen
+  users = users.map(privacyFilter);
+
   res.json(users);
 });
 
 // *** POST /api/user/participate *********************************************************
-router.post('/:id/participate', async (req, res) => {
+router.post('/:id/participate', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   const { project_id } = req.body;
   logger.debug(`API: POST /api/user/${id}/participate`);
-  ensureRolePermission(req.user.role, RoleTypes.USER);
-  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) || (role === RoleTypes.USER && req.user.id !== parseInt(id))) {
+
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) && req.user.role === RoleTypes.USER && req.user.id !== parseInt(id)) {
     return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
   }
   if (!project_id) {
@@ -113,10 +117,9 @@ router.post('/:id/participate', async (req, res) => {
 });
 
 // *** GET /api/user/participate *********************************************************
-router.get('/:id/participate', authenticateToken, async (req, res) => {
+router.get('/:id/participate', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   logger.debug(`API: GET  /api/user/${id}/participate`);
-  ensureRolePermission(req.user.role, RoleTypes.USER);
 
   try {
     const projectList = await getUserParticipationList(id);
@@ -128,12 +131,12 @@ router.get('/:id/participate', authenticateToken, async (req, res) => {
 });
 
 // *** DELETE /api/user/paticipate *********************************************************
-router.delete('/:id/participate', authenticateToken, async (req, res) => {
+router.delete('/:id/participate', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   const { project_id } = req.body;
   logger.debug(`API: DEL  /api/user/${id}/participate`);
-  ensureRolePermission(req.user.role, RoleTypes.USER);
-  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) || (role === RoleTypes.USER && req.user.id !== parseInt(id))) {
+
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) && req.user.role === RoleTypes.USER && req.user.id !== parseInt(id)) {
     return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
   }
 
@@ -191,7 +194,8 @@ router.post('/', async (req, res) => {
     role_id,
     is_private_email: is_private_email || false,
     is_private_telephone: is_private_telephone || false,
-    avatar_url: avatar_url || '/assets/avatars/avatar_1.png'
+    avatar_url: avatar_url || '/assets/avatars/avatar_1.png',
+    participate: []
   });
 });
 
@@ -201,10 +205,9 @@ router.put('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =>
   let { name, email, is_private_email, telephone, is_private_telephone, role_id, avatar_url } = req.body;
   logger.debug(`API: PUT  /api/user/${id} -> Update User: ${name}`);
 
-  if ((!checkPermissions(req.user.role, RoleTypes.MANAGER)) && (req.user.role === RoleTypes.USER && req.user.id !== parseInt(id))) {
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) && req.user.role === RoleTypes.USER && req.user.id !== parseInt(id)) {
     return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
   }
-
 
   if (!name || !email || !telephone) {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
@@ -234,6 +237,7 @@ router.put('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =>
   user.is_private_telephone = is_private_telephone ?? user.is_private_telephone;
   user.role_id = role_id ?? user.role_id;
   user.avatar_url = avatar_url ?? user.avatar_url;
+  user.participate = [];
 
   // Update User
   result = await db_run('Update User SET name=?, email=?, telephone=?, role_id=?, is_private_email=?, is_private_telephone=?, avatar_url=? where id = ?', [
@@ -261,11 +265,21 @@ router.get('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =>
   const result = await db_get(`SELECT * FROM User WHERE User.id = ?`, [id]);
   if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
   if (!result.row) return res.status(404).send(ErrorMsg.NOT_FOUND.NO_USER);
-  const user = createUser(result.row);
-  user.participate = await getUserParticipationList(id).catch((err) => {
+
+  let user = createUser(result.row);
+
+  // Anwenden des Privatsphäre-Filters
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) && req.user.role === RoleTypes.USER && req.user.id !== parseInt(id)) {
+    user = privacyFilter(user);
+  }
+
+  try {
+    user.participate = await getUserParticipationList(id);
+  } catch (err) {
     logger.error(`Error fetching participation for user ${id}: ${err.message}`);
-    return [];
-  });
+    user.participate = [];
+  }
+
   res.json(user);
 });
 
@@ -273,6 +287,10 @@ router.get('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =>
 router.delete('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { id } = req.params;
   logger.debug(`API: DEL  /api/user/${id}`);
+
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) && req.user.role === RoleTypes.USER && req.user.id !== parseInt(id)) {
+    return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
+  }
 
   // Delete User
   result = await db_run('DELETE FROM User WHERE id = ?', [id]);
@@ -294,7 +312,7 @@ const getUserParticipation = async (userId, project_id) => {
     `SELECT Participant.*, Project.idea, Project.event_id, Event.name FROM Participant 
     JOIN Project ON Project.id = Participant.project_id 
     JOIN Event ON Event.id = Project.event_id
-    WHERE Participant.user_id = ? AND Project.id = ?`,
+    WHERE Participant.user_id = ? AND Participant.project_id = ?`,
     [userId, project_id]
   );
   if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
@@ -312,4 +330,13 @@ const getUserParticipationList = async (userId) => {
   if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
   if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
   return result.row.map(createParticipate);
+};
+const privacyFilter = (user) => {
+  if (user.is_private_email) {
+    user.email = '';
+  }
+  if (user.is_private_telephone) {
+    user.telephone = '';
+  }
+  return user;
 };
