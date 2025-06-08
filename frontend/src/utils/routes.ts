@@ -9,6 +9,7 @@ import { getExistingToken } from '../utils/authUtils';
 import TeamListPage from '../pages/Teams/TeamListPage';
 import AboutPage from '../pages/AboutPage/AboutPage';
 import UserListPage from '../pages/UserList/UserList';
+import RequestActivationPage from '../pages/Register/RequestActivationPage';
 
 const handleProjectAdded = (selectedEvent: any, updateProjects: any) => {
   const token = getExistingToken();
@@ -32,6 +33,7 @@ const handleParticipateChanged = (
 export const getPublicRoutes = () => [
   { path: '/login', component: LoginPage, exact: true },
   { path: '/register', component: RegisterPage, exact: true },
+  { path: '/request-activation', component: RequestActivationPage, exact: true },
   { path: '/about', component: AboutPage, exact: true },
 ];
 

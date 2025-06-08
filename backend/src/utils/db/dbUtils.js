@@ -115,6 +115,22 @@ async function getRowCount(tablename) {
   return result.row.count;
 }
 
+async function columnExists(tableName, columnName) {
+  try {
+    const result = await  db_all(
+      `PRAGMA table_info(${tableName});`
+    );
+    if (result.err) {
+      logger.error('columnExists: Error checking table info:', result.err.message);
+    }
+    const test = result.row.some((column) => column.name === columnName);
+    return result.row.some((column) => column.name === columnName);
+  } catch (error) {
+    console.error(`Error checking if column ${columnName} exists in table ${tableName}:`, error);
+    return false;
+  }
+}
+
 module.exports = {
   db,
   db_run,
@@ -125,5 +141,6 @@ module.exports = {
   fillTable,
   isTableEmpty,
   existTableEntry,
-  getRowCount
+  getRowCount,
+  columnExists
 };

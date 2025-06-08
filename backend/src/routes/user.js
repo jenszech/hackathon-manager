@@ -7,6 +7,7 @@ const logger = require('../logger');
 const { checkPermissions, authenticateAndAuthorize } = require('../middlewares/authMiddleware');
 const router = express.Router();
 const { ErrorMsg, RoleTypes } = require('../constants');
+const { sendEmail, sendActivationEmail } = require('../utils/emailUtils');
 
 const createUser = (dbRow) => {
   return {
@@ -16,7 +17,7 @@ const createUser = (dbRow) => {
     is_private_email: dbRow?.is_private_email ?? false,
     telephone: dbRow?.telephone ?? '',
     is_private_telephone: dbRow?.is_private_telephone ?? false,
-    role_id: dbRow?.role_id ?? 2,
+    role_id: dbRow?.role_id ?? RoleTypes.NEW,
     avatar_url: dbRow?.avatar_url ?? '/assets/avatars/avatar_1.png',
     participate: []
   };
@@ -62,6 +63,41 @@ router.post('/login', async (req, res) => {
   });
 
   res.json({ token });
+});
+
+// *** POST /api/user/activate *************************************************
+router.post('/activate', async (req, res) => {
+  const { email, ac } = req.query;
+  logger.debug(`API: POST /api/user/activate -> Activate User: ${email}`);
+
+  if (!email || !ac) {
+    return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
+  }
+
+  // Überprüfen, ob der Benutzer existiert und der Aktivierungscode korrekt ist
+  const result = await db_get('SELECT * FROM User WHERE LOWER(email) = LOWER(?) AND activation_code = ?', [email.toLowerCase(), ac]);
+  if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
+  if (!result.row) return res.status(404).send(ErrorMsg.AUTH.INVALID_ACTIVATION_CODE);
+
+  const user = createUser(result.row);
+
+  // Benutzerrolle basierend auf der E-Mail-Domain setzen
+  const emailDomain = email.split('@')[1];
+  const allowedDomains = config.allowedDomains || [];
+  if (allowedDomains.includes(emailDomain)) {
+    user.role_id = RoleTypes.USER; // Interne Benutzer
+  } else {
+    user.role_id = RoleTypes.GUEST; // Externe Benutzer
+  }
+
+  // Aktivierungscode entfernen und Rolle aktualisieren
+  const updateResult = await db_run('UPDATE User SET role_id = ?, activation_code = NULL WHERE id = ?', [user.role_id, user.id]);
+  if (updateResult.err || updateResult.changes === 0) {
+    return res.status(500).send(ErrorMsg.SERVER.ERROR);
+  }
+
+  logger.debug(`User ${email} activated successfully with role ${user.role_id}`);
+  res.status(200).json({ message: 'User activated successfully', role: user.role_id });
 });
 
 // *** GET /api/user/list *****************************************************
@@ -153,50 +189,55 @@ router.delete('/:id/participate', authenticateAndAuthorize(RoleTypes.USER), asyn
 // *** USER *******************************************************************
 // *** POST /api/user *********************************************************
 router.post('/', async (req, res) => {
-  let { name, email, is_private_email, telephone, is_private_telephone, password, role_id, avatar_url } = req.body;
+  let { name, email, is_private_email, telephone, is_private_telephone, password, avatar_url } = req.body;
   logger.debug(`API: POST /api/user -> Create User: ${name}`);
-
-  //TODO: Set Passwort by Frontend
-  if (!password) password = 'welcome!';
-  if (!role_id) role_id = RoleTypes.USER;
 
   if (!name || !email) {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
   }
-
-  email = email.toLowerCase();
-  let result = await db_get('SELECT * FROM User WHERE email = ?', [email]);
-  if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
-  if (result.row) return res.status(409).send(ErrorMsg.VALIDATION.CONFLICT);
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  result = await db_run('INSERT INTO User (name, email, telephone, password, role_id, is_private_email, is_private_telephone, avatar_url) VALUES (?, ?, ?, ?, ?, ?, ?,?)', [
-    name,
-    email,
-    telephone,
-    hashedPassword,
-    role_id,
-    is_private_email || false,
-    is_private_telephone || false,
-    avatar_url || '/assets/avatars/avatar_1.png'
-  ]);
-  const user_id = result.lastID;
-  if (result.err || result.changes === 0) {
-    return res.status(500).send(`Server error`);
+  if (password && password.length < 8) {
+    return res.status(400).send(ErrorMsg.VALIDATION.PASSWORD_TOO_SHORT);
   }
 
-  res.status(201).json({
-    id: user_id,
+  const newUser = createUser({
     name,
     email,
+    is_private_email,
     telephone,
-    role_id,
-    is_private_email: is_private_email || false,
-    is_private_telephone: is_private_telephone || false,
-    avatar_url: avatar_url || '/assets/avatars/avatar_1.png',
-    participate: []
+    is_private_telephone,
+    avatar_url
   });
+  newUser.activation_code = Math.random().toString(36).substring(2, 15); // Aktivierungscode generieren
+
+  let result = await db_get('SELECT * FROM User WHERE LOWER(email) = LOWER(?)', [email]);
+  if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
+  if (result.row) {
+    if (result.row.role_id != RoleTypes.DUMMY) return res.status(409).send(ErrorMsg.VALIDATION.CONFLICT);
+    newUser.id = result.row.id;
+  }
+
+  if (!password) password = 'welcome!';
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const sqlStr = newUser.id
+    ? 'UPDATE User SET name = ?, email = ?, telephone = ?, password = ?, role_id = ?, is_private_email = ?, is_private_telephone = ?, avatar_url = ?, activation_code = ? WHERE id = ?'
+    : 'INSERT INTO User (name, email, telephone, password, role_id, is_private_email, is_private_telephone, avatar_url, activation_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+  const params = newUser.id
+    ? [newUser.name, newUser.email, newUser.telephone, hashedPassword, newUser.role_id, newUser.is_private_email, newUser.is_private_telephone, newUser.avatar_url, newUser.activation_code, newUser.id]
+    : [newUser.name, newUser.email, newUser.telephone, hashedPassword, newUser.role_id, newUser.is_private_email, newUser.is_private_telephone, newUser.avatar_url, newUser.activation_code];
+
+  result = await db_run(sqlStr, params);
+  if (result.err || result.changes === 0) {
+    return res.status(500).send(ErrorMsg.SERVER.ERROR);
+  }
+  
+  sendActivationEmail(newUser).catch((err) => {
+    logger.error(`Error sending activation email for user ${newUser.email}: ${err.message}`);
+  });
+  
+  newUser.id = newUser.id ? newUser.id : result.lastID;
+  res.status(201).json(newUser);
 });
 
 // *** PUT /api/user *********************************************************

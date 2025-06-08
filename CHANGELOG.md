@@ -3,6 +3,13 @@
 ## Version 0.2.6
 **Release Date:** 2025-06-06
 
+* Register
+ * Wiedererkennung neuer Nutzer
+ * Aktivierungs Email
+ * Neue Registier
+ 
+ * Ausblenden der Tabbar wenn nicht eingeloggt
+
 ### ✨ Neue Features
 - **TeilnehmerListe**  
   - Alphabetische Sektion zur schnellen Navigation.
@@ -10,7 +17,9 @@
   - Event-Filter zur Anzeige von Teilnehmern basierend auf Events.
 - **About Seite**  
   - Neue Seite mit Informationen über die Anwendung und das Team.
-- **Backend: Rollen- und Berechtigungsprüfung**  
+
+### Backend Anpssungen
+- **Rollen- und Berechtigungsprüfung**  
   - Implementierung von Rollen- und Berechtigungsprüfungen für alle relevanten Endpunkte.
 - **Berücksichtigung der Privatsphäre-Einstellungen**  
   - Alle Resultsets im Backend berücksichtigen jetzt die Privatsphäre-Einstellungen der Benutzer.

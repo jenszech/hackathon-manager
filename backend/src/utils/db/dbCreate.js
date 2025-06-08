@@ -28,6 +28,7 @@ async function dbCreate() {
           password TEXT,
           role_id integer NOT NULL DEFAULT 1,
           avatar_url TEXT DEFAULT '/assets/avatars/avatar_1.png',
+          activation_code TEXT,
       FOREIGN KEY (role_id) REFERENCES Role(id)
     )`
   );
