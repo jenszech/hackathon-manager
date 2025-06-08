@@ -3,40 +3,38 @@
 ## Version 0.2.6
 **Release Date:** 2025-06-06
 
-* Register
- * Wiedererkennung neuer Nutzer
- * Aktivierungs Email
- * Neue Registier
- 
- * Ausblenden der Tabbar wenn nicht eingeloggt
+### ✨ Neue Funktionen
+- **Neue Seite: Teilnehmerliste**  
+  - Die neue Seite zeigt eine Alphabetische Übersicht aller Teilnehmer
+  - Eine Suchfunktion ermöglicht das schnelle Filtern nach Namen.
+  - Zusätzlich können Teilnehmer basierend auf Events, an dehnen sie teilgenommen haben, gefiltert werden.
+- **Neue Seite: Über uns**  
+  - Eine neue Seite mit Informationen über die Anwendung und das Team wurde hinzugefügt.
+- **Registrierung neuer Nutzer**  
+  - **Wiedererkennung neuer Nutzer**: Bereits initial angelegte Teilnehmer werden erkannt. Dadurch sind vergangene Projekte automatisch den neuen Nutzern zugeordnet
+  - **Aktivierungs-E-Mail**: Nach der Registrierung wird eine E-Mail mit einem Aktivierungslink versendet, um die E-Mail-Adresse zu bestätigen.  
+  - **Neue Registrierungsseite**: Die Benutzerführung wurde optimiert, um den Registrierungsprozess einfacher und intuitiver zu gestalten.  
+  - **Tabbar-Ausblendung**: Die Navigationsleiste wird automatisch ausgeblendet, wenn der Benutzer nicht eingeloggt ist.
 
-### ✨ Neue Features
-- **TeilnehmerListe**  
-  - Alphabetische Sektion zur schnellen Navigation.
-  - Namenssuche für gezielte Filterung.
-  - Event-Filter zur Anzeige von Teilnehmern basierend auf Events.
-- **About Seite**  
-  - Neue Seite mit Informationen über die Anwendung und das Team.
-
-### Backend Anpssungen
+### 🛠️ Backend-Verbesserungen
 - **Rollen- und Berechtigungsprüfung**  
-  - Implementierung von Rollen- und Berechtigungsprüfungen für alle relevanten Endpunkte.
-- **Berücksichtigung der Privatsphäre-Einstellungen**  
-  - Alle Resultsets im Backend berücksichtigen jetzt die Privatsphäre-Einstellungen der Benutzer.
-- **Backend UnitTests**  
-  - Erweiterung der Testabdeckung für alle neuen Backend-Funktionen.
-- **Mail versand**
-  - Integration von Nodemailer für Emailversand per SMTP
-  - Versand einer Mail mit Aktivierungslink zur Mail Adressen verifikation
+  - Alle relevanten Endpunkte prüfen jetzt die Benutzerrolle, um sicherzustellen, dass nur berechtigte Nutzer Zugriff haben.
+- **Privatsphäre-Einstellungen**  
+  - Die Privatsphäre-Einstellungen der Benutzer werden jetzt bei allen Datenbankabfragen berücksichtigt.
+- **E-Mail-Versand**  
+  - Integration von Nodemailer für den Versand von E-Mails über SMTP.
+  - Automatischer Versand einer Aktivierungs-E-Mail nach der Registrierung.
+- **Unit-Tests**  
+  - Die Testabdeckung wurde erweitert, um die neuen Backend-Funktionen abzudecken.
 
-### 🐞 Bug fixes & Verbesserungen
-- **Design Fix im Header**  
+### 🐞 Fehlerbehebungen & Verbesserungen
+- **Design-Optimierungen im Header**  
   - Elemente im Header sind jetzt vertikal zentriert.
-  - Bei kleinen Auflösungen bricht die Event-Auswahl in die nächste Zeile um.
-- **Fehlerbehebung bei Teilnehmer-Logik**  
-  - Verbesserte Handhabung von leeren Teilnehmer-Arrays.
+  - Bei kleineren Bildschirmen wird die Event-Auswahl in die nächste Zeile verschoben, um die Lesbarkeit zu verbessern.
+- **Teilnehmer-Logik**  
+  - Die Handhabung von leeren Teilnehmerlisten wurde verbessert, um Fehler zu vermeiden.
 - **Stabilitätsverbesserungen**  
-  - Kleinere Fehler wurden behoben, um die allgemeine Stabilität und Performance der Anwendung zu verbessern.
+  - Kleinere Fehler wurden behoben, um die allgemeine Stabilität und Performance der Anwendung zu erhöhen.
 
 ## Version 0.2.5
 **Release Date:** 2025-06-04
