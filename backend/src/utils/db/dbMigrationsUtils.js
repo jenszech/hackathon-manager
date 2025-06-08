@@ -16,7 +16,7 @@ async function migrateToVersion025() {
     await db_run('Update User SET role_id = 3 WHERE role_id = 2;');
   }
 
-  if (!await columnExists('User', 'activation_code')) {
+  if (!(await columnExists('User', 'activation_code'))) {
     logger.debug('.... DB Migration: v0.2.5 -> User table update');
     await db_run('ALTER TABLE User ADD COLUMN activation_code TEXT;');
   }

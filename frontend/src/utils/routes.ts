@@ -10,6 +10,7 @@ import TeamListPage from '../pages/Teams/TeamListPage';
 import AboutPage from '../pages/AboutPage/AboutPage';
 import UserListPage from '../pages/UserList/UserList';
 import RequestActivationPage from '../pages/Register/RequestActivationPage';
+import ActivationPage from '../pages/Register/ActivationPage';
 
 const handleProjectAdded = (selectedEvent: any, updateProjects: any) => {
   const token = getExistingToken();
@@ -34,6 +35,7 @@ export const getPublicRoutes = () => [
   { path: '/login', component: LoginPage, exact: true },
   { path: '/register', component: RegisterPage, exact: true },
   { path: '/request-activation', component: RequestActivationPage, exact: true },
+  { path: '/account-activation', component: ActivationPage, exact: true },
   { path: '/about', component: AboutPage, exact: true },
 ];
 

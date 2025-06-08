@@ -9,14 +9,16 @@ export enum ResultType {
 const resultSuccess = (data: any) => {
   return {
     resultType: ResultType.SUCCESS,
+    resultCode: 200,
     resultMsg: null,
     data: data,
   };
 };
-const resultError = (msg: string) => {
+const resultError = (msg: string, code: number | null = null) => {
   return {
     resultType: ResultType.ERROR,
     resultMsg: msg,
+    resultCode: code ? code : 500,
     data: null,
   };
 };
@@ -139,6 +141,30 @@ export const getUserParticipations = async (
     return resultSuccess(response.data);
   } catch (error) {
     return resultError('User konnten nicht geladen werden');
+  }
+};
+
+export const postActivate = async (
+  email: string,
+  activationCode: string,
+): Promise<{ resultType: ResultType; resultCode: number; resultMsg: string | null; data: {message: string, role: number} |null }> => {
+  if (!email || !activationCode) return resultError('Email oder Aktivierungscode fehlen');
+
+  try {
+    const response = await axios.post(`/api/user/activate`, null, 
+      { params: { email, ac: activationCode }, 
+    });
+    if (response.status === 200) {
+      return resultSuccess(response.data);
+    } else {
+      return resultError('Aktivierung fehlgeschlagen');
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      const errorMessage = error.response.data || 'Unbekannter Fehler';
+      return resultError(errorMessage, error.response.status);
+    }
+    return resultError('Aktivierung fehlgeschlagen. Bitte überprüfen Sie den Link oder kontaktieren Sie uns.'); 
   }
 };
 

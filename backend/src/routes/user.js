@@ -74,10 +74,16 @@ router.post('/activate', async (req, res) => {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
   }
 
-  // Überprüfen, ob der Benutzer existiert und der Aktivierungscode korrekt ist
-  const result = await db_get('SELECT * FROM User WHERE LOWER(email) = LOWER(?) AND activation_code = ?', [email.toLowerCase(), ac]);
+// Überprüfen, ob der Benutzer existiert und der Aktivierungscode korrekt ist
+  let result = await db_get('SELECT * FROM User WHERE LOWER(email) = LOWER(?)', [email.toLowerCase()]);
   if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
-  if (!result.row) return res.status(404).send(ErrorMsg.AUTH.INVALID_ACTIVATION_CODE);
+  if (!result.row) return res.status(404).send(ErrorMsg.NOT_FOUND.NO_USER);
+  if (result.row.role_id !== RoleTypes.NEW) {
+    return res.status(409).send(ErrorMsg.VALIDATION.ALREADY_ACTIVE);
+  }
+  if (result.row.activation_code !== ac) {
+    return res.status(400).send(ErrorMsg.AUTH.INVALID_ACTIVATION_CODE);
+  }
 
   const user = createUser(result.row);
 
@@ -231,11 +237,11 @@ router.post('/', async (req, res) => {
   if (result.err || result.changes === 0) {
     return res.status(500).send(ErrorMsg.SERVER.ERROR);
   }
-  
+
   sendActivationEmail(newUser).catch((err) => {
     logger.error(`Error sending activation email for user ${newUser.email}: ${err.message}`);
   });
-  
+
   newUser.id = newUser.id ? newUser.id : result.lastID;
   res.status(201).json(newUser);
 });

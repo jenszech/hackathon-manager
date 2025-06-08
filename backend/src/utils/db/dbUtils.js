@@ -117,9 +117,7 @@ async function getRowCount(tablename) {
 
 async function columnExists(tableName, columnName) {
   try {
-    const result = await  db_all(
-      `PRAGMA table_info(${tableName});`
-    );
+    const result = await db_all(`PRAGMA table_info(${tableName});`);
     if (result.err) {
       logger.error('columnExists: Error checking table info:', result.err.message);
     }

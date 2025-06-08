@@ -94,7 +94,7 @@ const RegisterPage = () => {
         console.error('RegisterPage: Error during registration:', error);
         showToastError(`Fehler bei der Registrierung: ${errorMessage}`);
       } else {
-        showToastError('Fehler bei der Registrierung. Bitte versuchen Sie es erneut.');  
+        showToastError('Fehler bei der Registrierung. Bitte versuchen Sie es erneut.');
       }
     } finally {
       setIsButtonDisabled(false);

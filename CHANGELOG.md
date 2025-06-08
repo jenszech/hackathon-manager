@@ -25,6 +25,9 @@
   - Alle Resultsets im Backend berücksichtigen jetzt die Privatsphäre-Einstellungen der Benutzer.
 - **Backend UnitTests**  
   - Erweiterung der Testabdeckung für alle neuen Backend-Funktionen.
+- **Mail versand**
+  - Integration von Nodemailer für Emailversand per SMTP
+  - Versand einer Mail mit Aktivierungslink zur Mail Adressen verifikation
 
 ### 🐞 Bug fixes & Verbesserungen
 - **Design Fix im Header**  

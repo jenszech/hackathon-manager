@@ -8,8 +8,9 @@ const ErrorMsg = Object.freeze({
   VALIDATION: {
     MISSING_FIELDS: 'Missing fields',
     CONFLICT: 'Already exists',
+    ALREADY_ACTIVE: 'User is already active',
     WRONG_USER: 'Not the same user',
-    PASSWORD_TOO_SHORT: 'Password must be at least 8 characters long',
+    PASSWORD_TOO_SHORT: 'Password must be at least 8 characters long'
   },
   SERVER: {
     ERROR: 'Server error',

@@ -2,6 +2,15 @@ export const STORAGE_TOKEN = 'hackathonToken';
 export const STORAGE_PROFILE = 'hackathonProfile';
 import { archiveOutline, checkmark, closeOutline, playOutline, stopOutline } from 'ionicons/icons';
 
+export const RoleTypes = {
+  ADMIN: 1,
+  MANAGER: 2,
+  USER: 3,
+  GUEST: 4,
+  NEW: 5,
+  DUMMY: 6,
+};
+
 export type User = {
   id: number;
   email: string;

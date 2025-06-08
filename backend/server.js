@@ -88,7 +88,6 @@ function registerPrometheus() {
   //   logger.error(`Error sending activation email for user ${newUser.email}: ${err.message}`);
   // });
 
-
   app.use(
     prometheus({
       additionalLabels: Object.keys(globalLabels),

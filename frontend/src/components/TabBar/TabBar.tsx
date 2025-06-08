@@ -13,7 +13,7 @@ import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 const TabBar: React.FC = () => {
   const isAuthenticated = useIsAuthenticated();
   if (!isAuthenticated) {
-    return null; 
+    return null;
   }
 
   return (
