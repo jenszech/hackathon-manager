@@ -103,13 +103,17 @@ router.delete('/:id', authenticateAndAuthorize(RoleTypes.ADMIN), async (req, res
 });
 
 // *** DELETE /api/Participant *********************************************************
-router.delete('/', authenticateAndAuthorize(RoleTypes.ADMIN), async (req, res) => {
+router.delete('/', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
   const { project_id, user_id } = req.body;
   logger.debug(`API: DEL  /api/participant -> Project ID: ${project_id}, User ID: ${user_id}`);
 
   if (!project_id || !user_id) {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
   }
+  if (!checkPermissions(req.user.role, RoleTypes.MANAGER) && req.user.role === RoleTypes.USER && req.user.id !== user_id) {
+    return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
+  }
+
 
   result = await db_run('DELETE FROM Participant WHERE project_id = ? AND user_id = ?', [project_id, user_id]);
   if (result.err) {

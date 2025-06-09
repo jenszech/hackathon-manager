@@ -28,6 +28,7 @@ export type Profile = {
   is_private_telephone: boolean;
   avatar_url: string;
   participate: Participate[];
+  initiate: Initiate[];
 };
 
 export type Initiator = {
@@ -43,6 +44,14 @@ export type Participant = {
 };
 
 export type Participate = {
+  id: number;
+  user_id: number;
+  project_id: number;
+  idea: string;
+  event_id: number;
+  event_name: string;
+};
+export type Initiate = {
   id: number;
   user_id: number;
   project_id: number;

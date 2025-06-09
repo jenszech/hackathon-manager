@@ -19,11 +19,23 @@ const createUser = (dbRow) => {
     is_private_telephone: dbRow?.is_private_telephone ?? false,
     role_id: dbRow?.role_id ?? RoleTypes.NEW,
     avatar_url: dbRow?.avatar_url ?? '/assets/avatars/avatar_1.png',
-    participate: []
+    participate: [],
+    initiate: []
   };
 };
 
 const createParticipate = (dbRow) => {
+  return {
+    id: dbRow?.id ?? null,
+    user_id: dbRow?.user_id ?? null,
+    project_id: dbRow?.project_id ?? null,
+    idea: dbRow?.idea ?? '',
+    event_id: dbRow?.event_id ?? null,
+    event_name: dbRow?.name ?? ''
+  };
+};
+
+const createInitiate = (dbRow) => {
   return {
     id: dbRow?.id ?? null,
     user_id: dbRow?.user_id ?? null,
@@ -74,7 +86,7 @@ router.post('/activate', async (req, res) => {
     return res.status(400).send(ErrorMsg.VALIDATION.MISSING_FIELDS);
   }
 
-// Überprüfen, ob der Benutzer existiert und der Aktivierungscode korrekt ist
+  // Überprüfen, ob der Benutzer existiert und der Aktivierungscode korrekt ist
   let result = await db_get('SELECT * FROM User WHERE LOWER(email) = LOWER(?)', [email.toLowerCase()]);
   if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
   if (!result.row) return res.status(404).send(ErrorMsg.NOT_FOUND.NO_USER);
@@ -334,6 +346,12 @@ router.get('/:id', authenticateToken, async (req, res) => {
     logger.error(`Error fetching participation for user ${id}: ${err.message}`);
     user.participate = [];
   }
+  try {
+    user.initiate = await getUserInitiatorList(id);
+  } catch (err) {
+    logger.error(`Error fetching initiations for user ${id}: ${err.message}`);
+    user.initiate = [];
+  }
 
   res.json(user);
 });
@@ -374,6 +392,7 @@ const getUserParticipation = async (userId, project_id) => {
   if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
   return createParticipate(result.row);
 };
+
 const getUserParticipationList = async (userId) => {
   const result = await db_all(
     `SELECT Participant.*, Project.idea, Project.event_id, Event.name FROM Participant 
@@ -386,6 +405,19 @@ const getUserParticipationList = async (userId) => {
   if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_PARTICIPANT);
   return result.row.map(createParticipate);
 };
+const getUserInitiatorList = async (userId) => {
+  const result = await db_all(
+    `SELECT Initiator.*, Project.idea, Project.event_id, Event.name FROM Initiator 
+    JOIN Project ON Project.id = Initiator.project_id 
+    JOIN Event ON Event.id = Project.event_id
+    WHERE Initiator.user_id = ?`,
+    [userId]
+  );
+  if (result.err) throw new Error(ErrorMsg.SERVER.ERROR);
+  if (!result.row) throw new Error(ErrorMsg.NOT_FOUND.NO_INITIATOR);
+  return result.row.map(createInitiate);
+};
+
 const privacyFilter = (user) => {
   if (user.is_private_email) {
     user.email = '';
