@@ -23,9 +23,7 @@ const MyProjectOverviewCard: React.FC<MyProjectOverviewCardProps> = ({ profile, 
       history.push('/projects');
     }
   };
-
-  console.log('MyProjectOverviewCard: ', { profile, event, participation });
-
+  
   return (
     <IonCard className="hackathon-card dashboard" button onClick={handleCardClick}>
       <IonCardHeader>

@@ -55,7 +55,11 @@ export const getPrivateRoutes = (
     event: selectedEvent,
     projects: projects,
   },
-  { path: '/events', component: EventListPage, exact: true, profile: profile },
+  { path: '/events', 
+    component: EventListPage, 
+    exact: true, 
+    profile: profile,
+    events: events,},
   {
     path: '/teams',
     component: TeamListPage,

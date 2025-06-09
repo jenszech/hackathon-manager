@@ -4,10 +4,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const logger = require('../logger');
-const { checkPermissions, authenticateAndAuthorize } = require('../middlewares/authMiddleware');
+const { checkPermissions, authenticateAndAuthorize, authenticateToken } = require('../middlewares/authMiddleware');
 const router = express.Router();
 const { ErrorMsg, RoleTypes } = require('../constants');
-const { sendEmail, sendActivationEmail } = require('../utils/emailUtils');
+const { sendActivationEmail } = require('../utils/emailUtils');
 
 const createUser = (dbRow) => {
   return {
@@ -305,9 +305,17 @@ router.put('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =>
 });
 
 // *** GET /api/user *********************************************************
-router.get('/:id', authenticateAndAuthorize(RoleTypes.USER), async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   logger.debug(`API: GET  /api/user/${id}`);
+
+  if (!checkPermissions(req.user.role, RoleTypes.USER)) {
+    if (req.user.id !== parseInt(id)) {
+      logger.debug(`User ${user.username} with role ${req.user.role} does not have permission for ${RoleTypes.USER}`);
+      return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
+    }
+  }
+
 
   const result = await db_get(`SELECT * FROM User WHERE User.id = ?`, [id]);
   if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);

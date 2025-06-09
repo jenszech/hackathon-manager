@@ -34,6 +34,15 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ profile, event, projects 
   return (
     <IonPage>
       <IonContent>
+        <IonCard color={'secondary'}>
+          <IonCardHeader>
+            <IonCardTitle>Demo Mode</IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent>
+            Bis zur vollständien Aktivierung ihres Accounts können Sie die Demo-Funktion nutzen.
+          </IonCardContent>
+        </IonCard>
+
         <CountdownCard event={event} />
 
         {/* Projekte und Teilnehmer Boxen */}

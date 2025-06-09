@@ -56,7 +56,7 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
     const aggregatedProjects: Project[] = [];
 
     for (const event of events) {
-      const result = await getProjects(event.id, token);
+      const result = await getProjects(event.id, profile, token);
       if (result.resultType !== ResultType.SUCCESS || result.data === null) {
         showToastError(result.resultMsg ?? 'Error');
         continue;
