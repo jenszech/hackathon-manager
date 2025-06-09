@@ -15,6 +15,7 @@
   - **Aktivierungs-E-Mail**: Nach der Registrierung wird eine E-Mail mit einem Aktivierungslink versendet, um die E-Mail-Adresse zu bestätigen.  
   - **Neue Registrierungsseite**: Die Benutzerführung wurde optimiert, um den Registrierungsprozess einfacher und intuitiver zu gestalten.  
   - **Tabbar-Ausblendung**: Die Navigationsleiste wird automatisch ausgeblendet, wenn der Benutzer nicht eingeloggt ist.
+  - **Demo Modus**: Solange ein Teilnehmer nicht vollständig freigeschaltet ist, läuft der Hackathon Manager im Demo Modus. Dort sind keine echten Projekte oder Teilnehmerdaten abrufbar.
 
 ### 🛠️ Backend-Verbesserungen
 - **Rollen- und Berechtigungsprüfung**  
@@ -33,6 +34,8 @@
   - Bei kleineren Bildschirmen wird die Event-Auswahl in die nächste Zeile verschoben, um die Lesbarkeit zu verbessern.
 - **Teilnehmer-Logik**  
   - Die Handhabung von leeren Teilnehmerlisten wurde verbessert, um Fehler zu vermeiden.
+- **Projekt beitritt fälschlich möglich**  
+  - Trotz eines eigenen initierten Projekts war der Beitritt zu anderen Projekten möglich.
 - **Stabilitätsverbesserungen**  
   - Kleinere Fehler wurden behoben, um die allgemeine Stabilität und Performance der Anwendung zu erhöhen.
 
