@@ -1,3 +1,4 @@
+import { profile } from 'console';
 import { DEMO_RESULTS } from '../types/demoData';
 import { Event, Participate, Profile, Project, RoleTypes, STORAGE_PROFILE } from '../types/types';
 import axios from 'axios';
@@ -35,7 +36,8 @@ export const loadStoredProfile = (): Profile | null => {
   return userProfile;
 };
 
-export const isDemo = (profile: Profile): boolean => {
+export const isDemo = (profile: Profile|null): boolean => {
+  if (!profile) return true;
   const nonDemoRoles = [RoleTypes.ADMIN, RoleTypes.MANAGER, RoleTypes.USER];
   return !profile || !profile.role_id || !nonDemoRoles.includes(profile.role_id);
 };
@@ -121,9 +123,13 @@ export const deleteProfile = async (
 };
 
 export const getAllUsers = async (
+  profile: Profile | null,
   token: string | null,
 ): Promise<{ resultType: ResultType; resultMsg: string | null; data: Profile[] | null }> => {
   if (!token) return resultError('token is missing');
+  if (!token || !profile) return resultError('token or profile is missing');
+  if (isDemo(profile)) return resultSuccess(DEMO_RESULTS.profiles);
+
 
   try {
     const response = await axios.get<Profile[]>(`/api/user/list/`, {
@@ -185,12 +191,7 @@ export const getProjects = async (
 ): Promise<{ resultType: ResultType; resultMsg: string | null; data: Project[] | null }> => {
   if (!token || !eventId) return resultError('token or eventId is missing');
   if (!profile) return resultError('profile is missing');
-  if (isDemo(profile)) {
-    console.log('getProjects: Using DEMO data');
-    console.log('getProjects: eventId:', eventId);
-    console.log('getProjects: DEMO_RESULTS.projects:', DEMO_RESULTS.projects[eventId]);
-    return resultSuccess(DEMO_RESULTS.projects[eventId]);
-  }
+  if (isDemo(profile)) return resultSuccess(DEMO_RESULTS.projects[eventId-1]);
 
   try {
     const response = await axios.get<Project[]>(`/api/project/list/${eventId}`, {

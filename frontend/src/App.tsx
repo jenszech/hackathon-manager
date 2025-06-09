@@ -82,6 +82,9 @@ const App = () => {
         return;
       }
       if (selectedEvent) {
+        console.log('App: Fetching projects for event: ', selectedEvent.id);
+        console.log('App: Profile: ', profile);
+        console.log('App: Token: ', token);
         fetchProjects(selectedEvent.id, profile, token, setProjects, showToastError);
       }
     }

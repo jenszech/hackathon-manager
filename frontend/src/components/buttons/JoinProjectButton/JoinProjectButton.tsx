@@ -2,6 +2,7 @@ import React from 'react';
 import { IonButton, IonIcon } from '@ionic/react';
 import { Profile, Project } from '../../../types/types';
 import { star, checkmarkCircle, closeCircle, warning, personCircle } from 'ionicons/icons';
+import { isDemo } from '../../../utils/dataApiConnector';
 
 interface JoinProjectButtonProps {
   project: Project;
@@ -83,12 +84,21 @@ const JoinProjectButton: React.FC<JoinProjectButtonProps> = ({
       );
     }
 
-    return (
-      <IonButton expand="block" onClick={onJoinProject} disabled={disabled}>
-        <IonIcon slot="start" icon={star}></IonIcon>
-        Projekt beitreten
-      </IonButton>
-    );
+    if (!isDemo(profile)) {
+      return (
+        <IonButton expand="block" onClick={onJoinProject} disabled={disabled}>
+          <IonIcon slot="start" icon={star}></IonIcon>
+          Projekt beitreten
+        </IonButton>
+      );
+    } else {
+      return (
+        <IonButton expand="block" disabled={true}>
+          <IonIcon slot="start" icon={star}></IonIcon>
+          Demo-Modus: Projekt beitreten nicht möglich
+        </IonButton>
+      );
+    }
   }
 
   return null;

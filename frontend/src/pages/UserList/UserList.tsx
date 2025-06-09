@@ -41,7 +41,7 @@ const UserListPage: React.FC<UserListPageProps> = ({ profile, events }) => {
   // Funktion zum Abrufen der Benutzerliste
   const fetchUserList = async (token: string | null) => {
     console.log('UserListPage: Fetching Users');
-    const result = await getAllUsers(token);
+    const result = await getAllUsers(profile, token);
     if (result.resultType !== ResultType.SUCCESS || result.data === null) {
       showToastError(result.resultMsg ?? 'Error');
       return;

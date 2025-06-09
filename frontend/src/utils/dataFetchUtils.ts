@@ -32,6 +32,7 @@ export const fetchProjects = async (
     showToastError(result.resultMsg ?? 'Error');
     return;
   }
+  console.log(`Result Data${result.data}`);
   console.log(`${result.data.length} Projects fetched!`);
   setProjects(result.data);
 };
