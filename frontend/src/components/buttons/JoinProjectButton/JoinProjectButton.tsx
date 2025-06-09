@@ -24,15 +24,11 @@ const JoinProjectButton: React.FC<JoinProjectButtonProps> = ({
   const isEventParticipator = profile.participate.some(
     (participation) => participation.event_id === eventId,
   );
-  const isEventInitiator = profile.initiate.some(
-    (initiation) => initiation.event_id === eventId,
-  );
+  const isEventInitiator = profile.initiate.some((initiation) => initiation.event_id === eventId);
   const userIsFree = !isEventParticipator && !isEventInitiator;
-
 
   const isInitiator = project.initiators.some((initiator) => initiator.id === profile?.id);
   const isParticipant = project.participants?.some((p) => p.id === profile?.id);
-  
 
   console.log('JoinProjectButton: ', {
     eventId,
@@ -44,8 +40,6 @@ const JoinProjectButton: React.FC<JoinProjectButtonProps> = ({
     isParticipant,
     profile: profile,
   });
-
-  
 
   if (statusId === 3) {
     return (

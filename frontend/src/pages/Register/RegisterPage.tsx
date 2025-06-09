@@ -32,6 +32,7 @@ const emptyProfile: Profile = {
   is_private_telephone: false,
   avatar_url: '',
   participate: [],
+  initiate: [],
 };
 
 const RegisterPage = () => {

@@ -99,11 +99,11 @@ const ProjectListPage: React.FC<ProjectListPageProps> = ({ profile, event, proje
 
         {/* IonFab Button */}
         {!isDemo(profile) && (
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton color="primary" onClick={() => history.push('/projects/add')}>
-            <IonIcon icon={addOutline} />
-          </IonFabButton>
-        </IonFab>
+          <IonFab vertical="bottom" horizontal="end" slot="fixed">
+            <IonFabButton color="primary" onClick={() => history.push('/projects/add')}>
+              <IonIcon icon={addOutline} />
+            </IonFabButton>
+          </IonFab>
         )}
       </IonContent>
     </IonPage>

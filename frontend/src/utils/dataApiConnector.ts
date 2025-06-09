@@ -36,7 +36,7 @@ export const loadStoredProfile = (): Profile | null => {
   return userProfile;
 };
 
-export const isDemo = (profile: Profile|null): boolean => {
+export const isDemo = (profile: Profile | null): boolean => {
   if (!profile) return true;
   const nonDemoRoles = [RoleTypes.ADMIN, RoleTypes.MANAGER, RoleTypes.USER];
   return !profile || !profile.role_id || !nonDemoRoles.includes(profile.role_id);
@@ -131,7 +131,6 @@ export const getAllUsers = async (
   if (!token || !profile) return resultError('token or profile is missing');
   if (isDemo(profile)) return resultSuccess(DEMO_RESULTS.profiles);
 
-
   try {
     const response = await axios.get<Profile[]>(`/api/user/list/`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -161,12 +160,17 @@ export const getUserParticipations = async (
 export const postActivate = async (
   email: string,
   activationCode: string,
-): Promise<{ resultType: ResultType; resultCode: number; resultMsg: string | null; data: {message: string, role: number} |null }> => {
+): Promise<{
+  resultType: ResultType;
+  resultCode: number;
+  resultMsg: string | null;
+  data: { message: string; role: number } | null;
+}> => {
   if (!email || !activationCode) return resultError('Email oder Aktivierungscode fehlen');
 
   try {
-    const response = await axios.post(`/api/user/activate`, null, 
-      { params: { email, ac: activationCode }, 
+    const response = await axios.post(`/api/user/activate`, null, {
+      params: { email, ac: activationCode },
     });
     if (response.status === 200) {
       return resultSuccess(response.data);
@@ -178,7 +182,9 @@ export const postActivate = async (
       const errorMessage = error.response.data || 'Unbekannter Fehler';
       return resultError(errorMessage, error.response.status);
     }
-    return resultError('Aktivierung fehlgeschlagen. Bitte überprüfen Sie den Link oder kontaktieren Sie uns.'); 
+    return resultError(
+      'Aktivierung fehlgeschlagen. Bitte überprüfen Sie den Link oder kontaktieren Sie uns.',
+    );
   }
 };
 
@@ -192,7 +198,7 @@ export const getProjects = async (
 ): Promise<{ resultType: ResultType; resultMsg: string | null; data: Project[] | null }> => {
   if (!token || !eventId) return resultError('token or eventId is missing');
   if (!profile) return resultError('profile is missing');
-  if (isDemo(profile)) return resultSuccess(DEMO_RESULTS.projects[eventId-1]);
+  if (isDemo(profile)) return resultSuccess(DEMO_RESULTS.projects[eventId - 1]);
 
   try {
     const response = await axios.get<Project[]>(`/api/project/list/${eventId}`, {

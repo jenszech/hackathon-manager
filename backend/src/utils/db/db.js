@@ -17,7 +17,6 @@ async function dbInitialisation() {
   await insertInitiator();
   await insertParticipants();
 
-
   logger.info('DB Init: DB created');
 }
 

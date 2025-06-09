@@ -328,7 +328,6 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
   }
 
-
   const result = await db_get(`SELECT * FROM User WHERE User.id = ?`, [id]);
   if (result.err) return res.status(500).send(ErrorMsg.SERVER.ERROR);
   if (!result.row) return res.status(404).send(ErrorMsg.NOT_FOUND.NO_USER);

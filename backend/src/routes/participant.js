@@ -114,7 +114,6 @@ router.delete('/', authenticateAndAuthorize(RoleTypes.USER), async (req, res) =>
     return res.status(403).send(ErrorMsg.AUTH.NO_PERMISSION);
   }
 
-
   result = await db_run('DELETE FROM Participant WHERE project_id = ? AND user_id = ?', [project_id, user_id]);
   if (result.err) {
     return res.status(500).send(ErrorMsg.SERVER.ERROR);
