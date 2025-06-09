@@ -8,6 +8,8 @@ async function dbInitialisation() {
   await dbCreate();
   await dbFillKeyTables();
 
+  await migrateDB();
+
   await insertUserAdmin();
   await insertEvents();
   await insertProjects();
@@ -15,7 +17,6 @@ async function dbInitialisation() {
   await insertInitiator();
   await insertParticipants();
 
-  await migrateDB();
 
   logger.info('DB Init: DB created');
 }
