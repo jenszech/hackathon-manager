@@ -3,6 +3,9 @@
 Der Hackathon Manager ist eine Webanwendung zur Organisation und Durchführung von Hackathons.  
 Er bietet Funktionen zur Verwaltung von Projekten, Teams und Teilnehmern sowie zur Kommunikation und Zusammenarbeit während des Events.
 
+Für den Betrieb des Hackathon Managers reicht unser zweites Projekt [Hackathon-Stack](https://github.com/jenszech/hackathon-stack).  
+Mehr Informationen zur Konfiguration und zum Betrieb findest du dort.
+
 ## Inhalt
 
 - [Motivation](#motivation)
@@ -11,11 +14,13 @@ Er bietet Funktionen zur Verwaltung von Projekten, Teams und Teilnehmern sowie z
   - [Frontend](#frontend)
   - [Backend](#backend)
 - [Howto: Wie starte ich mein Projekt](#howto-wie-starte-ich-mein-projekt)
+  - [Lokal](#lokal)
+  - [Per Docker](#per-docker)
 - [Autoren](#autoren)
-- [Build- und Test-Badges](#build-und-test-badges)
 - [Lizenz](#lizenz)
 - [Code of Conduct](#code-of-conduct)
-- [Beitragshinweise](#beitragshinweise)
+- [Contribution](#contribution)
+- [Build- und Test-Badges](#build-und-test-badges)
 
 ## Motivation
 
@@ -86,6 +91,8 @@ Weitere Details zur lokalen Einrichtung findest du in der [Entwicklerdokumentati
 Eine ausführliche Dokumentation der Konfiguration und Start Optionen ist im Rahmen des  [Hackathon Stack](https://github.com/jenszech/hackathon-stack) abrufbar.
 
 ### Per Docker
+Docker ermöglicht eine einfache Bereitstellung und Verwaltung der Anwendung in isolierten Containern. Dies stellt sicher, dass die Anwendung unabhängig von der lokalen Umgebung konsistent läuft.
+
 Für den Betrieb und die Konfiguration des Projekts:
 - Siehe das Repository [hackathon-stack](https://github.com/jenszech/hackathon-stack) für eine vollständige Docker-basierte Projektkonfiguration.
 - Starte die Umgebung mit:
@@ -103,22 +110,21 @@ Für den Betrieb und die Konfiguration des Projekts:
 
 Du kannst uns fragen, wenn es irgendwelche Fragen gibt!
 
-- J.Zech
-- Oliver Donzyk
-
-## Lizenz
-Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der Datei LICENSE.md.
-
-## Code of Conduct
-Wir erwarten von allen Mitwirkenden, dass sie sich an unseren [Code of Conduct](CODE_OF_CONDUCT.md) halten, um eine respektvolle und freundliche Community zu fördern.
+- [Jens Zech](https://github.com/jenszech)
+- [Oliver Donzyk](https://github.com/odonzyk)
 
 ## Contribution
-Wenn du zum Projekt beitragen möchtest, lies bitte die [Beitragshinweise](CONTRIBUTING.md). 
-Dort findest du alle Informationen, wie du Änderungen vorschlagen und Pull Requests einreichen kannst. 
 
-Für eine ausführlichere anleitung zur Einrichtung der Entwicklungsumgebung shau dir die [Entwicklerdokumentation](docs/developing.md) an!
+Wenn du zum Projekt beitragen möchtest, lies bitte die [Beitragshinweise](CONTRIBUTING.md).  
+Dort findest du alle Informationen, wie du Änderungen vorschlagen und Pull Requests einreichen kannst.  
+
+Wir freuen uns über jeden Beitrag, sei es durch das Melden von Fehlern, das Vorschlagen neuer Features oder das Einreichen von Pull Requests.  
+
+Für eine ausführlichere Anleitung zur Einrichtung der Entwicklungsumgebung schau dir die [Entwicklerdokumentation](docs/developing.md) an!
 
 ## Build- und Test-Badges
+
+Die Badges zeigen den aktuellen Status der Builds, die Docker-Images und die Release-Version des Projekts.
 
 [![Build Status](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yml/badge.svg)](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yml)  
 [![Frontend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--frontend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-frontend)

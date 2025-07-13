@@ -1,30 +1,42 @@
 # Entwicklung
 
 Für den Betrieb des Hackathon Managers reicht unser zweites Projekt [Hackathon-Stack](https://github.com/jenszech/hackathon-stack).  
-Mehr Informationen zur Konfiguration und zum Betrieb findest du dort.
+Dort findest du detaillierte Informationen zur Konfiguration und zum Betrieb.
 
-Wenn du selbst Hand anlegen und mitentwickeln möchtest, bist du hier richtig!  
+Wenn du selbst aktiv mitentwickeln möchtest, bist du hier genau richtig!  
 Dieses Repository enthält den Quellcode für die Entwicklung des Hackathon Managers.  
 
-Im Folgenden findest du eine kurze Anleitung, wie du das Projekt auscheckst, einrichtest, konfigurierst und startest.
+Im Folgenden findest du eine umfassende Anleitung, wie du das Projekt auscheckst, einrichtest, konfigurierst und startest.
 
 ## Inhaltsverzeichnis
 
 - [Projekt einrichten](#projekt-einrichten)
-- [Repository klonen](#repository-klonen)
-- [Backend starten](#backend-starten)
-- [Frontend starten](#frontend-starten)
+   - [Repository klonen](#repository-klonen)
+   - [Einrichten der Entwicklungsumgebung](#einrichten-der-entwicklungsumgebung)
+      - [Konfiguration erstellen](#konfiguration-erstellen)
+         - [Verzeichnisstruktur](#verzeichnisstruktur)
+         - [Backend konfigurieren](#backend-konfigurieren)
+         - [Frontend konfigurieren](#frontend-konfigurieren)
+      - [Abhängigkeiten installieren](#abhängigkeiten-installieren)
+         - [Backend einrichten](#backend-einrichten)
+         - [Frontend einrichten](#frontend-einrichten)
+      - [Anwendung lokal starten](#anwendung-lokal-starten)
+         - [Backend starten](#backend-starten)
+         - [Frontend starten](#frontend-starten)
+      - [Anwendung als Docker-Container starten](#anwendung-als-docker-container-starten)
+- [Deployment-Optionen](#deployment-optionen)
+  - [Lokales Deployment](#lokales-deployment)
+  - [Produktives Deployment](#produktives-deployment)
+- [Anwendung](#anwendung)
+  - [Backend](#backend)
+  - [Frontend](#frontend)
 - [Architektur](#architektur)
   - [API](#api)
   - [Monitoring](#monitoring)
   - [Datenbankstruktur](#datenbankstruktur)
-- [Testen und Bereitstellen mit Docker](#testen-und-bereitstellen-mit-docker)
+  - [Diagramm erstellen](#diagramm-erstellen)
 - [Konventionen](#konventionen)
-  - [PreCommit-Aufgaben](#precommit-aufgaben)
-  - [GIT-Branches](#git-branches)
-  - [Commit-Konventionen](#commit-konventionen)
-- [Verwendete Tools & Bibliotheken](#verwendete-tools--bibliotheken)
-
+- [Quellen & Frameworks](#quellen--frameworks)
 
 # Projekt einrichten
 Um das Projekt lokal auszuführen, folge diesen Schritten:
@@ -32,38 +44,38 @@ Um das Projekt lokal auszuführen, folge diesen Schritten:
 1. **Repository klonen**  
    - Klone das Projekt aus dem Repository.
 2. **Backend einrichten**  
-   - Konfiguriere das Backend  
-   - Installiere die Abhängigkeiten  
-   - Starte das Backend  
+   - Konfiguriere das Backend.  
+   - Installiere die Abhängigkeiten.  
+   - Starte das Backend.  
 3. **Frontend einrichten**  
-   - Konfiguriere das Frontend  
-   - Installiere die Abhängigkeiten  
-   - Starte das Frontend  
-   - Greife auf die Anwendung zu  
+   - Konfiguriere das Frontend.  
+   - Installiere die Abhängigkeiten.  
+   - Starte das Frontend.  
+   - Greife auf die Anwendung zu.  
 4. **Zusätzliche Informationen**  
-   - Führe einen Health-Check durch  
-   - Sieh dir die API-Dokumentation an  
+   - Führe einen Health-Check durch.  
+   - Sieh dir die API-Dokumentation an.  
 
-Beachte die [Branching-Konventionen](#branching-conventions) & [Commit-Konventionen](#commit-conventions) ! 
+Beachte die [Branching-Konventionen](#git-branches) und [Commit-Konventionen](#commit-konventionen)!
 
 ## Repository klonen
-Wenn du HTTP zum Klonen verwenden möchtest, musst du zuerst ein Zugriffstoken erstellen.
-Link zum Erstellen eines Zugriffstokens -> https://gitlab-ext.drsbln.de/-/user_settings/personal_access_tokens
+Wenn du HTTP zum Klonen verwenden möchtest, musst du zuerst ein Zugriffstoken erstellen.  
+Link zum Erstellen eines Zugriffstokens: [GitLab Access Token](https://gitlab-ext.drsbln.de/-/user_settings/personal_access_tokens)
 
-Wenn du ein persönliches "Access Token" in deinem GitLab-Benutzerprofil erstellt hast, kannst du es wie folgt verwenden:
+Nachdem du ein persönliches "Access Token" in deinem GitLab-Benutzerprofil erstellt hast, kannst du es wie folgt verwenden:
 ```sh
 git clone https://<Dein_Login_Name>:<dein_gitlab-token>@gitlab-ext.drsbln.de/hackathon/hackathon-manager.git
 ```
 
 ## Einrichten der Entwicklungsumgebung
 ### Konfiguration erstellen
-Für die Entwicklungsumgebung muss eine Konfigurationsdatei erstellt werden. Die Konfiguration wird basierend auf der Umgebungsvariable `NODE_ENV` verwendet. Die möglichen Werte für `NODE_ENV` sind:
+Erstelle eine Konfigurationsdatei für die Entwicklungsumgebung. Die Konfiguration wird basierend auf der Umgebungsvariable `NODE_ENV` verwendet. Mögliche Werte für `NODE_ENV` sind:
 
 - `dev`, `development`: Für lokale Entwicklung.
 - `stage`, `staging`: Für Testumgebungen.
 - `prod`, `production`: Für den produktiven Betrieb.
 
-Falls nötig, kannst du die Werte in der Konfigurationsdatei anpassen, um deine spezifischen Anforderungen zu erfüllen.
+Falls nötig, passe die Werte in der Konfigurationsdatei an, um deine spezifischen Anforderungen zu erfüllen.
 
 #### Verzeichnisstruktur
 Die erforderliche Verzeichnisstruktur für die Entwicklungsumgebung sieht wie folgt aus:
@@ -95,72 +107,70 @@ Die erforderliche Verzeichnisstruktur für die Entwicklungsumgebung sieht wie fo
         └── nginx
             └── default.conf
 ```
-#### Backend konfigurieren
 
-Lege die für deine Umgebung benötigten Konfigurationsdateien an. Dieser kannst du anhand der Beispiel Datei initial anlegen und dann entsprechend anpassen
+#### Backend konfigurieren
+Lege die für deine Umgebung benötigten Konfigurationsdateien an. Nutze die Beispiel-Datei als Vorlage und passe sie an:
 
 ```sh
 cp ./backend/volumes/config/.env.example ./backend/volumes/config/.env.dev
 ```
-Passe nun die Datei `.env.dev` entsprechend deinen Bedürfnissen an.
-Eine Dokumentation der möglichen Configurations Parameter findest du [hier](./config_backend.md)
+
+Passe die Datei `.env.dev` entsprechend deinen Bedürfnissen an.  
+Eine Dokumentation der möglichen Konfigurationsparameter findest du [hier](./config_backend.md).
 
 #### Frontend konfigurieren
-
-Lege die für deine Umgebung benötigten Konfigurationsdateien an. Dieser kannst du anhand der Beispiel Datei initial anlegen und dann entsprechend anpassen
+Lege die für deine Umgebung benötigten Konfigurationsdateien an. Nutze die Beispiel-Datei als Vorlage und passe sie an:
 
 ```sh
 cp ./frontend/volumes/config/.env.example ./frontend/volumes/config/.env.dev
 ```
-Passe nun die Datei `.env.dev` entsprechend deinen Bedürfnissen an.
-Eine Dokumentation der möglichen Configurations Parameter findest du [hier](./config_frontend.md)
+
+Passe die Datei `.env.dev` entsprechend deinen Bedürfnissen an.  
+Eine Dokumentation der möglichen Konfigurationsparameter findest du [hier](./config_frontend.md).
 
 ### Abhängigkeiten installieren
 #### Backend einrichten
-Alle erforderlichen Abhängigkeiten für das Projekt müssen installiert werden.
+Installiere alle erforderlichen Abhängigkeiten für das Backend:
 ```sh
 cd ./backend
 npm install
 ```
 
 #### Frontend einrichten
-
-Alle erforderlichen Abhängigkeiten für das Projekt müssen installiert werden.
+Installiere alle erforderlichen Abhängigkeiten für das Frontend:
 ```sh
 cd ./frontend
 npm install
 ```
 
 ### Anwendung lokal starten
-#### Backend starten ####
-Wenn die Konfiguration erfolgt ist und die Pakete alle installiert sind, kann das Backend gestartet werden.
-Beim ersten Start wird die Datenbank automatisch erstellt und initialisiert.
+#### Backend starten
+Starte das Backend, nachdem die Konfiguration abgeschlossen und die Pakete installiert wurden. Beim ersten Start wird die Datenbank automatisch erstellt und initialisiert.
 
 ```sh
 cd ./backend
 npm run start-dev 
 ```
-Du kannst je nach Bedarf für die verschiedenen Environments, die folgenden Start Befehler verwenden: `start-dev`, `start-stage`, `start-prod`.  
-Der Server (Docker) verwendet allgemein `start`. Dort wird die Environment dann entsprechend der zuvor gesetzten Umgebungsvariable verwendet.
 
-Du kannst überprüfen, ob das Backend läuft, indem du die folgenden Endpunkte aufrufst:
+Je nach Bedarf kannst du für die verschiedenen Umgebungen die folgenden Startbefehle verwenden: `start-dev`, `start-stage`, `start-prod`.  
+Der Server (Docker) verwendet allgemein `start`. Die Umgebung wird basierend auf der zuvor gesetzten Umgebungsvariable verwendet.
+
+Überprüfe, ob das Backend läuft, indem du die folgenden Endpunkte aufrufst:
 
 * **Health Check**: http://localhost:3005/api/health
 * **API-Dokumentation (Swagger)**: http://localhost:3005/api-docs
 
-URL & Port eventuell entsprechend deines Setups anpassen.
+Passe URL und Port gegebenenfalls an dein Setup an.
 
 #### Frontend starten
-Jetzt kannst du das Frontend starten.
-
+Starte das Frontend:
 ```sh
 cd ./frontend
 npm run start-dev 
 ```
 
-### Anwendung als docker container starten
-Wenn die Konfiguration erfolgt enstsprechend obiger Doku erfolgt ist, kann das Projekt auch per Docker gestartet werden.
-Beim ersten Start wird auch hier die Datenbank automatisch erstellt und initialisiert.
+### Anwendung als Docker-Container starten
+Starte das Projekt per Docker, nachdem die Konfiguration gemäß der Dokumentation erfolgt ist. Beim ersten Start wird auch hier die Datenbank automatisch erstellt und initialisiert.
 
 - Starte die Umgebung mit:
    ```bash
@@ -171,10 +181,19 @@ Beim ersten Start wird auch hier die Datenbank automatisch erstellt und initiali
    docker compose down
    ```
 
-### Anwendung
-#### Backend 
+Weitere Details findest du in der [Lokalen Deployment-Dokumentation](./local_deployment.md).
 
-Das Backend stellt unter http://url:port die folgenden Endpunkte bereit. Für mehr details siehe die entsprechende Swagger Doku unter `/api-docs/`
+## Deployment-Optionen
+
+### Lokales Deployment
+Für die lokale Entwicklung und Tests kannst du die Anleitung in der Datei [local_deployment.md](./local_deployment.md) verwenden. Sie enthält Details zur Konfiguration und zum Starten der Umgebung.
+
+### Produktives Deployment
+Für das produktive Deployment mit Docker und Traefik findest du alle relevanten Informationen in der Datei [production_deploy.md](./production_deploy.md). Diese beschreibt die Architektur, Konfiguration und das Routing im Detail.
+
+# Anwendung
+## Backend
+Das Backend stellt unter http://url:port die folgenden Endpunkte bereit. Für mehr Details siehe die entsprechende Swagger-Dokumentation unter `/api-docs/`.
 
 | Pfad            | Funktion                       |
 | --------------- | ------------------------------ |
@@ -183,8 +202,8 @@ Das Backend stellt unter http://url:port die folgenden Endpunkte bereit. Für me
 | `/api/health/`  | Gesundheitsprüfung             |
 | `/api/metrics/` | Prometheus-kompatible Metriken |
 
-#### Frontend
-Öffne die Hackathon-App in deinem Browser 
+## Frontend
+Öffne die Hackathon-App in deinem Browser:
 
 ==> http://localhost:8200
 
@@ -205,18 +224,18 @@ Für detailliertere Analysen kannst du Prometheus verwenden und die API-Messunge
 
 ## Datenbankstruktur
 
- <img src="./db_structure.png" alt="db structure" width="600" height= "600"/>
+ <img src="./db_structure.png" alt="db structure" width="600" height="600"/>
 
-### Create a Diagramm
-
-2. copy the code from ´db_diagram.txt´
-3. paste it here: [db](https://dbdiagram.io/d)
-4. edit and reorder things
-5. take picture (MAC: Cmd + Shift + 4)
-6. replace ´db_structure.png´ with the new image and replace the code with new the new code
+### Diagramm erstellen
+1. Kopiere den Code aus `db_diagram.txt`.
+2. Füge ihn hier ein: [dbdiagram.io](https://dbdiagram.io/d).
+3. Bearbeite und ordne die Elemente neu.
+4. Erstelle ein Screenshot (Mac: Cmd + Shift + 4).
+5. Ersetze `db_structure.png` mit dem neuen Bild und aktualisiere den Code.
 
 # Konventionen
-siehe [CONTRIBUTING](../CONTRIBUTING.md)
+Siehe [CONTRIBUTING](../CONTRIBUTING.md).
 
+# Quellen & Frameworks
 * **API-Dokumentation (Swagger)**: [Swagger-Dokumentation](https://swagger.io/docs/)
 * **Prometheus-Metriken**: [Prometheus-Dokumentation](https://prometheus.io/docs/)
