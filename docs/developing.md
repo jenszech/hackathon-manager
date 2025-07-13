@@ -115,57 +115,78 @@ cp ./frontend/volumes/config/.env.example ./frontend/volumes/config/.env.dev
 Passe nun die Datei `.env.dev` entsprechend deinen Bedürfnissen an.
 Eine Dokumentation der möglichen Configurations Parameter findest du [hier](./config_frontend.md)
 
-#### Abhängigkeiten installieren ####
-
+### Abhängigkeiten installieren
+#### Backend einrichten
 Alle erforderlichen Abhängigkeiten für das Projekt müssen installiert werden.
 ```sh
+cd ./backend
 npm install
 ```
 
-#### Backend starten ####
-Jetzt kannst du das Backend starten.
+#### Frontend einrichten
 
+Alle erforderlichen Abhängigkeiten für das Projekt müssen installiert werden.
+```sh
+cd ./frontend
+npm install
+```
+
+### Anwendung lokal starten
+#### Backend starten ####
+Wenn die Konfiguration erfolgt ist und die Pakete alle installiert sind, kann das Backend gestartet werden.
 Beim ersten Start wird die Datenbank automatisch erstellt und initialisiert.
 
 ```sh
+cd ./backend
 npm run start-dev 
 ```
-
-#### Überprüfen, ob das Backend läuft ####
+Du kannst je nach Bedarf für die verschiedenen Environments, die folgenden Start Befehler verwenden: `start-dev`, `start-stage`, `start-prod`.  
+Der Server (Docker) verwendet allgemein `start`. Dort wird die Environment dann entsprechend der zuvor gesetzten Umgebungsvariable verwendet.
 
 Du kannst überprüfen, ob das Backend läuft, indem du die folgenden Endpunkte aufrufst:
 
-* **Health Check**: http://localhost:3000/api/health
-* **API-Dokumentation (Swagger)**: http://localhost:3000/api-docs
+* **Health Check**: http://localhost:3005/api/health
+* **API-Dokumentation (Swagger)**: http://localhost:3005/api-docs
 
-### Frontend starten ####
-Zuerst muss eine Konfigurationsdatei für die Entwicklungsumgebung erstellt werden.
+URL & Port eventuell entsprechend deines Setups anpassen.
 
-```sh
-cd frontend
-cp env.example env.dev
-```
-Falls nötig, kannst du die Werte in der Konfigurationsdatei anpassen, um deine spezifischen Anforderungen zu erfüllen.
-
-#### Abhängigkeiten installieren ####
-
-Alle erforderlichen Abhängigkeiten für das Projekt müssen installiert werden.
-```sh
-npm install
-```
-
-### Frontend starten ###
+#### Frontend starten
 Jetzt kannst du das Frontend starten.
 
 ```sh
+cd ./frontend
 npm run start-dev 
 ```
 
-#### Auf die Anwendung zugreifen #### 
+### Anwendung als docker container starten
+Wenn die Konfiguration erfolgt enstsprechend obiger Doku erfolgt ist, kann das Projekt auch per Docker gestartet werden.
+Beim ersten Start wird auch hier die Datenbank automatisch erstellt und initialisiert.
 
+- Starte die Umgebung mit:
+   ```bash
+   docker compose up --build
+   ```
+- Stoppe die Umgebung mit:
+   ```bash
+   docker compose down
+   ```
+
+### Anwendung
+#### Backend 
+
+Das Backend stellt unter http://url:port die folgenden Endpunkte bereit. Für mehr details siehe die entsprechende Swagger Doku unter `/api-docs/`
+
+| Pfad            | Funktion                       |
+| --------------- | ------------------------------ |
+| `/api/`         | Haupt-REST-API                 |
+| `/api-docs/`    | API-Dokumentation (Swagger)    |
+| `/api/health/`  | Gesundheitsprüfung             |
+| `/api/metrics/` | Prometheus-kompatible Metriken |
+
+#### Frontend
 Öffne die Hackathon-App in deinem Browser 
 
-==> http://localhost:5175
+==> http://localhost:8200
 
 Melde dich mit den Standardanmeldedaten an:
 
@@ -175,12 +196,12 @@ Melde dich mit den Standardanmeldedaten an:
 # Architektur
 ## API 
 Die REST-API wird automatisch mit Swagger dokumentiert. Nach dem Start ist sie verfügbar unter:
-http://localhost:3000/api-docs
+http://localhost:3005/api-docs
 
 ## Monitoring 
 Für einen einfachen Health-Check kannst du http://localhost:3000/api/health aufrufen.
 
-Für detailliertere Analysen kannst du Prometheus verwenden und die API-Messungen unter http://localhost:3000/metrics abrufen.
+Für detailliertere Analysen kannst du Prometheus verwenden und die API-Messungen unter http://localhost:3005/metrics abrufen.
 
 ## Datenbankstruktur
 
@@ -194,51 +215,8 @@ Für detailliertere Analysen kannst du Prometheus verwenden und die API-Messunge
 5. take picture (MAC: Cmd + Shift + 4)
 6. replace ´db_structure.png´ with the new image and replace the code with new the new code
 
-## Testen und Bereitstellen mit Docker
-Bitte lösche diesen Ordner nicht!
-Für die Verwendung von Docker gibt es einen Ordner mit einem Entwurf für die Konfiguration von Docker, Docker-Compose und Traefik mit LetsEncrypt. Dieser Ordner ist notwendig, um eine lokale Umgebung mit LetsEncrypt und einem Reverse Proxy wie Traefik vorzubereiten.
-
-Der Ordner wird auch verwendet, um einen Produktionsserver und die Umgebung mit der entsprechenden DNS- und LetsEncrypt-Zertifikatskonfiguration einzurichten.
-
 # Konventionen
-
-## PreCommit-Aufgaben
-
-### Backend
-```sh
-npm test
-npm format
-```
-
-### Frontend
-```sh
-npm test
-npm test.e2e
-npm eslint
-npm format
-```
-
-## GIT-Branches
-### Haupt-Branches:
-
-- **`main`**: Dieser Branch sollte nur **produktionsfertigen Code** enthalten. Er sollte nur **sauberen, vollständigen, stabilen und gut getesteten** Code enthalten. Änderungen sollten nur über saubere Pull Requests (PRs) vom `develop`-Branch kommen. Die Änderungen sollten erst nach gründlicher Prüfung und Tests durch andere gemergt werden.
-- **`develop`**: Der Integrations-Branch, in dem neue Features und Bugfixes vor dem Merge in den `main`-Branch committet werden. Sobald die Änderungen committet sind, beginnt der **Staging**-Prozess mit Tests und Integration. Der Code muss nicht vollständig sein, sollte aber funktionieren!
-
-### Kurzlebige Branches:
-
-- **`feature/`**: Branches für Features mit spezifischen Kategorien! Sie sollten entsprechend dem Feature benannt werden, z. B. `feature/add-profil-page`. Mehrere Entwickler und Personen sollten am selben Feature arbeiten können.
-- **`bugfix/`**: Branches für Bugfixes, z. B. `bugfix/fix-login-error`.
-- **`experimental/`**: Branches für experimentelle Features oder zum Ausprobieren neuer Technologien, die nicht stabil sind, unvollständige Anforderungen haben oder bei denen unklar ist, ob sie verwendet werden sollen, z. B. `experimental/try-new-dark-theme`.
-
-### Commit-Konventionen
-
-Um die Organisation zu verbessern, empfehlen wir die Verwendung der folgenden Präfixe:
-
-- **`feat:`** für neue Features (z. B. `feat: Add user authentication module`)
-- **`fix:`** für Bugfixes (z. B. `fix: Resolve login error`)
-- **`chore:`** für kleinere Änderungen (z. B. `chore: Update README with new setup instructions`)
-
-## Verwendete Tools & Bibliotheken
+siehe [CONTRIBUTING](../CONTRIBUTING.md)
 
 * **API-Dokumentation (Swagger)**: [Swagger-Dokumentation](https://swagger.io/docs/)
 * **Prometheus-Metriken**: [Prometheus-Dokumentation](https://prometheus.io/docs/)
