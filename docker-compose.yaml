@@ -18,51 +18,8 @@ services:
       - ./backend/volumes/data:/usr/src/app/volumes/data
       - ./backend/volumes/database:/usr/src/app/volumes/database
     working_dir: /usr/src/app
-    volumes:
-      - ./backend:/usr/src/app
     ports:
       - "3005:3005"
-    depends_on:
-      - mysql
-    command: /bin/sh -c "npm install && npm run start"
-
-    labels:
-      - 'traefik.enable=true'
-      
-      # API-Endpunkt: hackathon-stg.drsbln.de/api
-      - 'traefik.http.routers.hackathonapi.priority=20'
-      - 'traefik.http.routers.hackathonapi.tls=true'
-      - 'traefik.http.routers.hackathonapi.rule=Host(`hackathon-stg.drsbln.de`) &&  Path(`/api`)'
-      - 'traefik.http.routers.hackathonapi.entrypoints=websecure'
-      - 'traefik.http.routers.hackathonapi.service=hackathonapi-service'
-
-      # Health-Check-Endpunkt: hackathon-stg.drsbln.de/api/health
-      - 'traefik.http.routers.hackathonhealth.priority=20'
-      - 'traefik.http.routers.hackathonhealth.tls=true'
-      - 'traefik.http.routers.hackathonhealth.rule=Host(`hackathon-stg.drsbln.de`) && Path(`/api/health`)'
-      - 'traefik.http.routers.hackathonhealth.entrypoints=websecure'
-      - 'traefik.http.routers.hackathonhealth.service=hackathonapi-service'
-
-      # Metrics-Endpunkt: hackathon-stg.drsbln.de/metrics
-      - 'traefik.http.routers.hackathonmetrics.priority=20'
-      - 'traefik.http.routers.hackathonmetrics.tls=true'
-      - 'traefik.http.routers.hackathonmetrics.rule=Host(`hackathon-stg.drsbln.de`) && Path(`/metrics`)'
-      - 'traefik.http.routers.hackathonmetrics.entrypoints=websecure'
-      - 'traefik.http.routers.hackathonmetrics.service=hackathonapi-service'
-
-      # API-Dokumentation: hackathon-stg.drsbln.de/api-docs
-      - 'traefik.http.routers.hackathondocs.priority=20'
-      - 'traefik.http.routers.hackathondocs.tls=true'
-      - 'traefik.http.routers.hackathondocs.rule=Host(`hackathon-stg.drsbln.de`) && Path(`/api-docs`)'
-      - 'traefik.http.routers.hackathondocs.entrypoints=websecure'
-      - 'traefik.http.routers.hackathondocs.service=hackathonapi-service'
-
-      # Verknüpfung des API-Services mit dem Node.js Server (Port 3000)
-      - 'traefik.http.services.hackathonapi-service.loadbalancer.server.port=3005'
-
-    networks:
-      - web
-      - internal
 
   hackathon-frontend:
     environment:
