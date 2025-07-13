@@ -1,4 +1,4 @@
-# 🚀 Hackathon Manager – Docker Setup
+# 🚀 Hackathon Manager – Docker Setup Local Deployment
 
 Diese Umgebung dient der lokalen Entwicklung und dem Testen des Hackathon-Manager-Projekts (Frontend + Backend + API-Dienste).
 
