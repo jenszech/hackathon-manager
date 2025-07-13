@@ -88,9 +88,9 @@ hackathon-manager/
 
 ## 👷 Autor & Lizenz
 
-Maintainer:  
- [odonzyk](https://github.com/odonzyk)\
- [jzech](https://github.com/jenszech)
+Du kannst uns fragen, wenn es irgendwelche Fragen gibt!
 
+- [Oliver Donzyk](https://github.com/odonzyk)
+- [Jens Zech](https://github.com/jenszech)
 
-Lizenz: MIT
+[![License](https://img.shields.io/github/license/jenszech/hackathon-manager)](https://github.com/jenszech/hackathon-manager/blob/main/LICENSE.md)
