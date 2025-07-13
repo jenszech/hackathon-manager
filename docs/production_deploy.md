@@ -1,6 +1,5 @@
 # 🧩 Hackathon Manager Deployment mit Docker & Traefik
 
-[![CI Status](https://github.com/jenszech/hackathon-manager/actions/workflows/build-images.yml/badge.svg)](https://github.com/jenszech/hackathon-manager/actions)
 [![Frontend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--frontend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-frontend)
 [![Backend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--backend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-backend)
 [![Build Images](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yaml/badge.svg)](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yaml)
