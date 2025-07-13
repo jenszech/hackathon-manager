@@ -10,21 +10,23 @@
 .DS_Store
 
 # Frontend
-/frontend/volumes/config/*
 /frontend/dist
 /frontend/dev-dist
 /frontend/node_modules
-!/frontend/volumes/.env.example
+/frontend/volumes/config/*
+/frontend/volumes/ngnix/*
+!/frontend/volumes/config/*.example
+!/frontend/volumes/ngnix/*.example.conf
 
 # Backend   
-/backend/volumes/config/*
-/backend/volumes/database/*
-/backend/volumes/data/*
 /backend/logs/*
 /backend/coverage/
 /backend/node_modules
-!/backend/volumes/.env.example
-!/backend/volumes/*.example.js
+/backend/volumes/config/*
+/backend/volumes/data/*
+/backend/volumes/database/*
+!/backend/volumes/config/.env.example
+!/backend/volumes/data/*.example.js
 !/backend/volumes/database/info.txt
 
 # Codeing Environment

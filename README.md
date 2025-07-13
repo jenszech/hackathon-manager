@@ -112,7 +112,7 @@ Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in d
 ## Code of Conduct
 Wir erwarten von allen Mitwirkenden, dass sie sich an unseren [Code of Conduct](CODE_OF_CONDUCT.md) halten, um eine respektvolle und freundliche Community zu fördern.
 
-## Beitragshinweise
+## Contribution
 Wenn du zum Projekt beitragen möchtest, lies bitte die [Beitragshinweise](CONTRIBUTING.md). 
 Dort findest du alle Informationen, wie du Änderungen vorschlagen und Pull Requests einreichen kannst. 
 

@@ -1,17 +1,41 @@
 # Entwicklung
 
-Das Repository liegt auf dem Thalia DRS GitLab Server. Dort kann das Projekt ausgecheckt (für weitere Anweisungen siehe [hier](cloning-the-repo)) und ein branch erstellt werden.
+Für den Betrieb des Hackathon Managers reicht unser zweites Projekt [Hackathon-Stack](https://github.com/jenszech/hackathon-stack).  
+Mehr Informationen zur Konfiguration und zum Betrieb findest du dort.
 
-## Projekt einrichten
+Wenn du selbst Hand anlegen und mitentwickeln möchtest, bist du hier richtig!  
+Dieses Repository enthält den Quellcode für die Entwicklung des Hackathon Managers.  
+
+Im Folgenden findest du eine kurze Anleitung, wie du das Projekt auscheckst, einrichtest, konfigurierst und startest.
+
+## Inhaltsverzeichnis
+
+- [Projekt einrichten](#projekt-einrichten)
+- [Repository klonen](#repository-klonen)
+- [Backend starten](#backend-starten)
+- [Frontend starten](#frontend-starten)
+- [Architektur](#architektur)
+  - [API](#api)
+  - [Monitoring](#monitoring)
+  - [Datenbankstruktur](#datenbankstruktur)
+- [Testen und Bereitstellen mit Docker](#testen-und-bereitstellen-mit-docker)
+- [Konventionen](#konventionen)
+  - [PreCommit-Aufgaben](#precommit-aufgaben)
+  - [GIT-Branches](#git-branches)
+  - [Commit-Konventionen](#commit-konventionen)
+- [Verwendete Tools & Bibliotheken](#verwendete-tools--bibliotheken)
+
+
+# Projekt einrichten
 Um das Projekt lokal auszuführen, folge diesen Schritten:
 
 1. **Repository klonen**  
    - Klone das Projekt aus dem Repository.
-2. **Backend starten**  
+2. **Backend einrichten**  
    - Konfiguriere das Backend  
    - Installiere die Abhängigkeiten  
    - Starte das Backend  
-3. **Frontend starten**  
+3. **Frontend einrichten**  
    - Konfiguriere das Frontend  
    - Installiere die Abhängigkeiten  
    - Starte das Frontend  
@@ -22,7 +46,7 @@ Um das Projekt lokal auszuführen, folge diesen Schritten:
 
 Beachte die [Branching-Konventionen](#branching-conventions) & [Commit-Konventionen](#commit-conventions) ! 
 
-### Repository klonen ###
+## Repository klonen
 Wenn du HTTP zum Klonen verwenden möchtest, musst du zuerst ein Zugriffstoken erstellen.
 Link zum Erstellen eines Zugriffstokens -> https://gitlab-ext.drsbln.de/-/user_settings/personal_access_tokens
 
@@ -31,16 +55,65 @@ Wenn du ein persönliches "Access Token" in deinem GitLab-Benutzerprofil erstell
 git clone https://<Dein_Login_Name>:<dein_gitlab-token>@gitlab-ext.drsbln.de/hackathon/hackathon-manager.git
 ```
 
-### Backend starten ###
-#### Backend konfigurieren ####
+## Einrichten der Entwicklungsumgebung
+### Konfiguration erstellen
+Für die Entwicklungsumgebung muss eine Konfigurationsdatei erstellt werden. Die Konfiguration wird basierend auf der Umgebungsvariable `NODE_ENV` verwendet. Die möglichen Werte für `NODE_ENV` sind:
 
-Zuerst muss eine Konfigurationsdatei für die Entwicklungsumgebung erstellt werden.
+- `dev`, `development`: Für lokale Entwicklung.
+- `stage`, `staging`: Für Testumgebungen.
+- `prod`, `production`: Für den produktiven Betrieb.
+
+Falls nötig, kannst du die Werte in der Konfigurationsdatei anpassen, um deine spezifischen Anforderungen zu erfüllen.
+
+#### Verzeichnisstruktur
+Die erforderliche Verzeichnisstruktur für die Entwicklungsumgebung sieht wie folgt aus:
+
+```
+.
+├── backend
+│   └── volumes
+│       ├── config
+│       │   ├── .env.example
+│       │   ├── .env.dev
+│       │   ├── .env.prod
+│       │   └── .env.stage
+│       ├── data
+│       │   ├── Projects.example.js
+│       │   ├── Teams.example.js
+│       │   └── User.example.js
+│       └── database
+│           ├── hackathon.dev.db
+│           ├── hackathon.prod.db
+│           └── hackathon.stg.db
+└── frontend
+    └── volumes
+        ├── config
+        │   ├── .env.example
+        │   ├── .env.dev
+        │   ├── .env.prod
+        │   └── .env.stage
+        └── nginx
+            └── default.conf
+```
+#### Backend konfigurieren
+
+Lege die für deine Umgebung benötigten Konfigurationsdateien an. Dieser kannst du anhand der Beispiel Datei initial anlegen und dann entsprechend anpassen
 
 ```sh
-cd backend
-cp ./volumes/env.example ./volumes/config/env.dev
+cp ./backend/volumes/config/.env.example ./backend/volumes/config/.env.dev
 ```
-Falls nötig, kannst du die Werte in der Konfigurationsdatei anpassen, um deine spezifischen Anforderungen zu erfüllen.
+Passe nun die Datei `.env.dev` entsprechend deinen Bedürfnissen an.
+Eine Dokumentation der möglichen Configurations Parameter findest du [hier](./config_backend.md)
+
+#### Frontend konfigurieren
+
+Lege die für deine Umgebung benötigten Konfigurationsdateien an. Dieser kannst du anhand der Beispiel Datei initial anlegen und dann entsprechend anpassen
+
+```sh
+cp ./frontend/volumes/config/.env.example ./frontend/volumes/config/.env.dev
+```
+Passe nun die Datei `.env.dev` entsprechend deinen Bedürfnissen an.
+Eine Dokumentation der möglichen Configurations Parameter findest du [hier](./config_frontend.md)
 
 #### Abhängigkeiten installieren ####
 
