@@ -2,6 +2,9 @@
 
 Diese Umgebung dient der lokalen Entwicklung und dem Testen des Hackathon-Manager-Projekts (Frontend + Backend + API-Dienste).
 
+[Docker-compose.yaml]([https://github.com/odonzyk](https://github.com/jenszech/hackathon-manager/blob/develop/dockerfiles/docker-compose-local.yaml))
+
+
 ## 📁 Projektstruktur
 
 ```
