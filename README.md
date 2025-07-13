@@ -104,7 +104,7 @@ Für den Betrieb und die Konfiguration des Projekts:
 Du kannst uns fragen, wenn es irgendwelche Fragen gibt!
 
 - J.Zech
-- O.Donzyk
+- Oliver Donzyk
 
 ## Lizenz
 Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der Datei LICENSE.md.
