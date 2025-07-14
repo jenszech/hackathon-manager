@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir -p release
           tar -czf release/HMgrStack.tgz \
-            docker-compose.yml \
+            docker-compose.yaml \
             backend/volumes/* \
             frontend/volumes/*
       # Release erstellen und das Archiv anhängen
