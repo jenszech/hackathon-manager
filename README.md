@@ -126,12 +126,13 @@ Für eine ausführlichere Anleitung zur Einrichtung der Entwicklungsumgebung sch
 
 Die Badges zeigen den aktuellen Status der Builds, die Docker-Images und die Release-Version des Projekts.
 
-[![Build Status](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yml/badge.svg)](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yml)  
-[![Frontend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--frontend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-frontend)
-[![Backend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--backend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-backend)
-[![Build Images](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yaml/badge.svg)](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yaml)
-
-[![Release Version](https://img.shields.io/github/v/release/jenszech/hackathon-manager)](https://github.com/jenszech/hackathon-manager/releases)  
+[![Release Version](https://img.shields.io/github/v/release/jenszech/hackathon-manager)](https://github.com/jenszech/hackathon-manager/releases)
 [![License](https://img.shields.io/github/license/jenszech/hackathon-manager)](https://github.com/jenszech/hackathon-manager/blob/main/LICENSE.md)
+
+
+[![Frontend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--frontend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-frontend) 
+[![Backend Image](https://img.shields.io/badge/docker-ghcr.io/jenszech/hackathon--backend-blue)](https://github.com/users/jenszech/packages/container/package/hackathon-backend)
+
+[![Build Images](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/jenszech/hackathon-manager/actions/workflows/build.yaml)
 
 
