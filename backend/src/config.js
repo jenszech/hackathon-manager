@@ -30,8 +30,8 @@ module.exports = {
   logLevel: check(process.env.LOG_LEVEL, 'info'),
   apiUrl: check(process.env.API_URL, 'http://localhost'),
   hostUrl: check(process.env.HOST_URL, 'http://localhost'),
-  hostPort: check(process.env.HOST_PORT, '8100'),
-  apiPort: check(process.env.API_PORT, '3000'),
+  hostPort: check(process.env.HOST_PORT, '8200'),
+  apiPort: check(process.env.API_PORT, '3005'),
   dbPath: check(process.env.DB_PATH, './hackathon.db'),
   mysqlHost: check(process.env.MYSQL_HOST, 'localhost'),
   mysqlPort: check(process.env.MYSQL_PORT, 3306),
@@ -41,6 +41,7 @@ module.exports = {
   mysqlConnectionLimit: check(process.env.MYSQL_CONNECTION_LIMIT, 10),
   mysqlQueueLimit: check(process.env.MYSQL_QUEUE_LIMIT, 0),
   jwtSecret: check(process.env.JWT_SECRET, 'your-secret-key'),
+  apiSecret: check(process.env.API_SECRET, 'your-api-secret'),
   allowedDomains: check(process.env.ALLOWED_DOMAINS, 'dummy.de'),
   activationUrl: check(process.env.ACTIVATION_URL, 'http://localhost:3000/api/user/activate'),
   smtpHost: check(process.env.SMTP_HOST, 'localhost'),
@@ -52,7 +53,6 @@ module.exports = {
   smtpRejectUnauthorized: check(process.env.SMTP_UNAUTOHORIZED, false),
   rateLimitWindowMs: check(process.env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
   rateLimitMax: check(process.env.RATE_LIMIT_MAX, 100),
-  apiSecret: check(process.env.API_SECRET, 'your-drs-secret'),
   check,
   logEnvironmentVariables
 };
