@@ -61,11 +61,12 @@ jobs:
           docker push ${{ steps.vars.outputs.image_name }}:latest
 
   create-release:
-    permissions:
-      contents: write
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: build-images
+    permissions: 
+      contents: write
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
