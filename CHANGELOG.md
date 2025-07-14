@@ -1,6 +1,6 @@
 # 📦 Changelog
 
-## Version 0.4.0
+## Version 0.4.2
 **Release Date:** 2025-10-09
 ### ✨ Neue Funktionen
 - **Going Public**  

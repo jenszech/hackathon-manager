@@ -3,8 +3,21 @@
 Der Hackathon Manager ist eine Webanwendung zur Organisation und Durchführung von Hackathons.  
 Er bietet Funktionen zur Verwaltung von Projekten, Teams und Teilnehmern sowie zur Kommunikation und Zusammenarbeit während des Events.
 
-Für den Betrieb des Hackathon Managers reicht unser zweites Projekt [Hackathon-Stack](https://github.com/jenszech/hackathon-stack).  
+
+<div style="display: flex; align-items: center;">
+  <img src="./docs/images/Fun4Code_small_128.png" alt="Code4Fun Logo" style="margin-right: 20px;"/>
+  <div>
+Der Hackathon Manager ist als leidenschaftliches Hobbyprojekt des <strong>Code4Fun-Teams</strong>, in unserer Freizeit entstanden.
+Als <strong>Open Source-Projekt</strong> möchten wir es mit der Community teilen und freuen uns über eure Ideen, Vorschläge und Feedback!
+  </div>
+</div></br>
+
+Wer den Hackathon Managers einfach nur nutzen will, dem reicht der [Hackathon-Stack](https://github.com/jenszech/hackathon-stack).  
 Mehr Informationen zur Konfiguration und zum Betrieb findest du dort.
+
+
+<center><img src="./docs/images/Demo_Dashboard.png" alt="Dashboard Ansicht" width="750" height="500"></center>
+
 
 ## Inhalt
 
@@ -46,6 +59,11 @@ Der Hackathon Manager wurde entwickelt, um diese Herausforderungen zu bewältige
 - **Eigenes Profil**: Teilnehmer können ihre Kontaktdaten und persönlichen Informationen hinterlegen.
 - **Verlinkung zu MSTeams**: Integration von Microsoft Teams, um die Kommunikation innerhalb der Teams zu erleichtern.
 - **Responsive Design**: Optimiert für Desktop, Tablet und mobile Geräte.
+
+<div>
+  <center><img src="./docs/images/Demo_Project.png" alt="Projek Details" width="500" height="330">  
+  <img src="./docs/images/Demo_User.png" alt="Teilnehmer Ansicht" width="500" height="330"></center>
+</div>
 
 ## Implementierung
 
@@ -97,13 +115,13 @@ Melde dich mit den Standardanmeldedaten an:
 
 Eine ausführliche Dokumentation der Konfiguration und Start Optionen ist im Rahmen des  [Hackathon Stack](https://github.com/jenszech/hackathon-stack) abrufbar.
 
-### Start einer eigenen Entwicklungsumgebung
+## Lokalen Source ausführen
 ```bash
 git clone https://github.com/jenszech/hackathon-manager.git
 cd hackathon-manager
 ```
 
-#### Lokale Laufzeitumgebung
+### Lokale Laufzeitumgebung
 Starten des Backends
    ```bash
    cd backend
@@ -119,7 +137,7 @@ Starten des Frontends
 
 Weitere Details zur lokalen Einrichtung findest du in der [Entwicklerdokumentation](docs/developing.md).
 
-#### Per Docker
+### Docker Umgebung
 Starten der docker container aud dem Projekt heraus:
    ```bash
    docker compose up --build
