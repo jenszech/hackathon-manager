@@ -37,7 +37,9 @@ Mehr Informationen zur Konfiguration und zum Betrieb findest du dort.
 
 ## Motivation
 
-Hackathons sind eine großartige Möglichkeit, kreative Ideen zu entwickeln und innovative Projekte umzusetzen. Doch die Organisation eines Hackathons bringt zahlreiche Herausforderungen mit sich:
+Hackathons sind eine großartige Möglichkeit, kreative Ideen zu entwickeln und innovative Projekte umzusetzen. Doch die Organisation eines Hackathons bringt zahlreiche Herausforderungen mit sich.
+
+Unser Ziel ist es, eine leichtgewichtige und selbst gehostete Lösung bereitzustellen, um interne Hackathons mit 50–250 Teilnehmenden aus verschiedenen Teams und Standorten zu organisieren. Der Fokus liegt dabei auf Einfachheit und die wirklich wichtigen Features – ohne den Overhead klassischer Event-Plattformen. Alles drin, was du für einen reibungslosen internen Hackathon brauchst.
 
 - **Effiziente Projektverwaltung**: Teilnehmer müssen ihre Projekte einreichen können, ohne dass es zu Chaos oder Missverständnissen kommt. Oft fehlt eine zentrale Plattform, um alle Projekte übersichtlich zu sammeln und zu verwalten.  
 - **Transparenz bei der Projektübersicht**: Organisatoren und Teilnehmer benötigen eine klare Übersicht darüber, welche Projekte verfügbar sind und wer Teil des Teams ist.  
