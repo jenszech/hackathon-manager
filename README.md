@@ -72,34 +72,59 @@ Es befindet sich im Verzeichnis `/backend`.
 - **Dotenv** für die Verwaltung von Umgebungsvariablen
 - **Docker** & **Docker Compose** für containerisierte Bereitstellungen
 
-## Howto: Wie starte ich mein Projekt
+## Quickstart Guide
+### Betreiben eines eigenen Hackathon Managers
+```bash
+git clone https://github.com/jenszech/hackathon-stack.git
+cd hackathon-stack
+docker compose up --build
+```
 
-### Lokal
-Für die lokale Entwicklung:
-1. **Backend starten**  
+Wenn alles klappt werden die docker container bezogen und gestartet. 
+Du erreichst dann die folgenden Applikationen:
+
+| Pfad                              | Funktion                        |
+| --------------------------------- | ------------------------------- |
+| http://localhost:                 | Haupt-REST-API                  |
+| http://localhost:3005/api-docs/   | Backend API-Dokumentation (Swagger)     |
+| http://localhost:3005/api/health/ | Backend Healthcheck             |
+| http://localhost:8081             | Dozzle, abrufen der Logfiles    |
+
+Melde dich mit den Standardanmeldedaten an:
+
+    Benutzer: hackathon@thalia.de
+    Passwort: welcome!
+
+Eine ausführliche Dokumentation der Konfiguration und Start Optionen ist im Rahmen des  [Hackathon Stack](https://github.com/jenszech/hackathon-stack) abrufbar.
+
+### Start einer eigenen Entwicklungsumgebung
+```bash
+git clone https://github.com/jenszech/hackathon-manager.git
+cd hackathon-manager
+```
+
+#### Lokale Laufzeitumgebung
+Starten des Backends
    ```bash
    cd backend
+   npm install
    npm run start-dev
    ```
-2. **Frontend starten**  
+Starten des Frontends
    ```bash
    cd frontend
+   npm install
    npm run start-dev
    ```
 
 Weitere Details zur lokalen Einrichtung findest du in der [Entwicklerdokumentation](docs/developing.md).
-Eine ausführliche Dokumentation der Konfiguration und Start Optionen ist im Rahmen des  [Hackathon Stack](https://github.com/jenszech/hackathon-stack) abrufbar.
 
-### Per Docker
-Docker ermöglicht eine einfache Bereitstellung und Verwaltung der Anwendung in isolierten Containern. Dies stellt sicher, dass die Anwendung unabhängig von der lokalen Umgebung konsistent läuft.
-
-Für den Betrieb und die Konfiguration des Projekts:
-- Siehe das Repository [hackathon-stack](https://github.com/jenszech/hackathon-stack) für eine vollständige Docker-basierte Projektkonfiguration.
-- Starte die Umgebung mit:
+#### Per Docker
+Starten der docker container aud dem Projekt heraus:
    ```bash
    docker compose up --build
    ```
-- Stoppe die Umgebung mit:
+Stoppen der Umgebung
    ```bash
    docker compose down
    ```
