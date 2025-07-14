@@ -1,0 +1,31 @@
+name: Create HMgrStack Release 
+
+on:
+  workflow_dispatch:  
+  
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout des Repository-Codes
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Erstellen des .tgz-Archivs
+      - name: Create .tgz archive
+        run: |
+          mkdir -p release
+          tar -czf release/HMgrStack.tgz \
+            docker-compose.yml \
+            backend/volumes/* \
+            frontend/volumes/*
+      # Release erstellen und das Archiv anhängen
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: latest
+          name: Latest Release
+          files: release/HMgrStack.tgz
