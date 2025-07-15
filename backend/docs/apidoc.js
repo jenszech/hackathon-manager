@@ -14,11 +14,10 @@ const apiDocumentation = {
     version: `${config.version}`,
     title: 'Hackathon Manager API',
     description: 'API for handling Events and Projects for Hackathons',
-    termsOfService: 'https://thalia-drs.de/terms',
     contact: {
-      name: 'Thalia DRS',
-      email: 'j.zech@thalia.de',
-      url: 'https://www.thalia-drs.de'
+      name: 'Jens Zech',
+      email: 'jzech@gmx.de',
+      url: 'https://github.com/jenszech'
     },
     license: {
       name: 'Apache 2.0',

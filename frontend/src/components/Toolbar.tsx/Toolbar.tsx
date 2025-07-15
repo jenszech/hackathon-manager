@@ -8,7 +8,7 @@ import {
   IonSelectOption,
 } from '@ionic/react';
 import './Toolbar.css';
-import ThaliaLogo from '../../assets/thalia_logo.png';
+import HeaderLogo from '../../assets/logo.png';
 import { Event } from '../../types/types';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 
@@ -27,7 +27,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ selectedEvent, events, onSelectEvent 
       </IonButtons>
       <div className="hackathon-toolbar-container">
         <div className="hackathon-toolbar-left">
-          <img src={ThaliaLogo} alt="Thalia Muse" className="hackathon-toolbar-logo" />
+          <img src={HeaderLogo} alt="Hackathon Logo" className="hackathon-toolbar-logo" />
           <IonTitle className="hackathon-toolbar-title">Hackathon Manager</IonTitle>
         </div>
         <div className="hackathon-toolbar-right">

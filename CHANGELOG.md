@@ -150,7 +150,7 @@
 
 ### ✨ Neue Funktionen
 - **Neues Design**
-  - Ein neues helleres Design das stärker an die Farben und Elemente von Thalia angepasst ist
+  - Ein neues helleres Design das stärker an die Farben und Elemente 
   - verbesserter Kontrast
 
 ## Version 0.2.6

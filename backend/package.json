@@ -16,7 +16,7 @@
     "Hackathon-backend"
   ],
   "type": "commonjs",
-  "author": "Thalia-DRS",
+  "author": "Jens Zech",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.1",
