@@ -7,7 +7,7 @@ Er bietet Funktionen zur Verwaltung von Projekten, Teams und Teilnehmern sowie z
 <div style="display: flex; align-items: center;">
   <img src="./docs/images/Fun4Code_small_128.png" alt="Code4Fun Logo" style="margin-right: 20px;"/>
   <div>
-Der Hackathon Manager ist als leidenschaftliches Hobbyprojekt des <strong>Code4Fun-Teams</strong>, in unserer Freizeit entstanden.
+Der Hackathon Manager ist als leidenschaftliches Hobbyprojekt des <strong>Fun4Code-Teams</strong>, in unserer Freizeit entstanden.
 Als <strong>Open Source-Projekt</strong> möchten wir es mit der Community teilen und freuen uns über eure Ideen, Vorschläge und Feedback!
   </div>
 </div></br>
